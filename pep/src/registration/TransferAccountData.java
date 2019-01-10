@@ -64,17 +64,33 @@ public class TransferAccountData extends HttpServlet {
 				account_data.remove("masterkey");
 				datenhaltung.insertHashMap("account", account_data);
 				PrintWriter out = response.getWriter();
+				out.println("<!DOCTYPE html>");
+				out.println("<html>");
+				out.println("<head>");
+				out.println("<meta charset=\"utf-8\">");
+				out.println("</head>");
+				out.println("<body>");
 				out.println("<script>");
-				out.println("window.open(\"/pep/login\", \"_self\")");
+				out.println("window.alert(\"Registrierung erfolgreich!\");");
+				out.println("window.open(\"/pep/login\", \"_self\");");
 				out.println("</script>");
+				out.println("</body>");
 				out.close();
 			}
 			else
 			{
 				PrintWriter out = response.getWriter();
+				out.println("<!DOCTYPE html>");
+				out.println("<html>");
+				out.println("<head>");
+				out.println("<meta charset=\"utf-8\">");
+				out.println("</head>");
+				out.println("<body>");
 				out.println("<script>");
+				out.println("window.alert(\"Registrierung fehlgeschlagen!\");");
 				out.println("window.open(\"/pep/registration\", \"_self\")");
 				out.println("</script>");
+				out.println("</body>");
 				out.close();
 			}
 		} 

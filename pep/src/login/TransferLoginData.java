@@ -46,10 +46,23 @@ public class TransferLoginData extends HttpServlet {
 		}
 		Driver datenhaltung = new Driver();
 		
+		HttpSession session = request.getSession();
+		String sessionmapname_ID = (String)(session.getAttribute("session_id"));
+		if (sessionmapname_ID != null)
+			try 
+			{
+				datenhaltung.logout(Integer.valueOf(sessionmapname_ID));
+			} 
+			catch (SQLException e) 
+			{
+				e.printStackTrace();
+			}
+			session.invalidate();
+			
 		try 
 		{
+			session = request.getSession();
 			String pw = Driver.getHash(account_data.get("password").getBytes(StandardCharsets.UTF_8));
-			HttpSession session = request.getSession();  
 			String sessionID = datenhaltung.login(account_data.get("accountname_ID"), pw);
 			if (sessionID != null)
 			{
@@ -63,9 +76,17 @@ public class TransferLoginData extends HttpServlet {
 			else
 			{
 				PrintWriter out = response.getWriter();
+				out.println("<!DOCTYPE html>");
+				out.println("<html>");
+				out.println("<head>");
+				out.println("<meta charset=\"utf-8\">");
+				out.println("</head>");
+				out.println("<body>");
 				out.println("<script>");
-				out.println("window.open(\"/pep/login\", \"_self\")");
+				out.println("window.alert(\"Login fehlgeschlagen!\");");
+				out.println("window.open(\"/pep/login\", \"_self\");");
 				out.println("</script>");
+				out.println("</body>");
 				out.close();
 			}
 		} 

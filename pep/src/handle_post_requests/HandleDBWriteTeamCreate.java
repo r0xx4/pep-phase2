@@ -48,6 +48,14 @@ public class HandleDBWriteTeamCreate extends HttpServlet {
 			push_into_db.put(key, request.getParameterMap().get(key)[0]);
 		}
 		
+		PrintWriter out = response.getWriter();
+		out.println("<!DOCTYPE html>");
+		out.println("<html>");
+		out.println("<head>");
+		out.println("<meta charset=\"utf-8\">");
+		out.println("</head>");
+		out.println("<body>");
+		out.println("<script>");
 		Driver datenhaltung = new Driver();
 		
 		try 
@@ -70,16 +78,19 @@ public class HandleDBWriteTeamCreate extends HttpServlet {
 					new File("C:/data/" + kennnummer).mkdirs();
 				}
 			}
+			else
+			{
+				out.println("window.alert(\"Bitte geben Sie einen Lehrstuhlinhaber als Betreuer 1 an!\");");
+			}
 		} 
 		catch (SQLException e) 
 		{
 			e.printStackTrace();
 		}
 		
-		PrintWriter out = response.getWriter();
-		out.println("<script>");
 		out.println("window.open(\"/pep/home/show_teams\", \"_self\")");
 		out.println("</script>");
+		out.println("</body>");
 		out.close();
 	}
 }
