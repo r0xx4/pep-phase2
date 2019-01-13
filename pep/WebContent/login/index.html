@@ -114,6 +114,14 @@
             
             var email; 
             var password;
+            
+            var input = document.getElementById("inputPassword");
+            input.addEventListener("keyup", function(event){
+            	event.preventDefault();
+            	if(event.keyCode === 13){
+            		document.getElementById("btnLogIn").click();
+            	}
+            });
 
             document.querySelector('#btnLogIn').addEventListener('click', btnLogInEvent);  
             function btnLogInEvent(){
