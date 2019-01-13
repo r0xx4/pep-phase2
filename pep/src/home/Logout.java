@@ -35,15 +35,16 @@ public class Logout extends HttpServlet {
 		Driver datenhaltung = new Driver();
 		String sessionmapname_ID = (String)(session.getAttribute("session_id"));
 		System.out.println(sessionmapname_ID);
-		try 
-		{
-			datenhaltung.logout(Integer.valueOf(sessionmapname_ID));
-		} 
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-		}
-		session.invalidate();
+		if (sessionmapname_ID != null)
+			try 
+			{
+				datenhaltung.logout(Integer.valueOf(sessionmapname_ID));
+			} 
+			catch (SQLException e) 
+			{
+				e.printStackTrace();
+			}
+			session.invalidate();
 		RequestDispatcher rd = request.getRequestDispatcher("/login");
 		rd.forward(request,  response);
 	}

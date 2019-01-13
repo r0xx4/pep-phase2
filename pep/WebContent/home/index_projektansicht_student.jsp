@@ -170,7 +170,25 @@
 	        	window.open("/pep/home/show_project", "_self");
 			}
 			
+			var form = document.createElement("form");
+			form.setAttribute("method", "post");
+			form.setAttribute("action", "/pep/file_upload");
+			form.setAttribute("enctype", "multipart/form-data");
 			
+			function onFileSelected(element){
+				var file = element.files[0];
+				element.parentNode.parentNode.lastElementChild.innerHTML = file.name;
+				form.appendChild(element);
+			}
+			
+			document.querySelector('#btn_submit').addEventListener("click", sendPostForm);
+			function sendPostForm(){
+				document.body.appendChild(form);
+				form.submit();
+			}
+			
+			
+			/*
 			function onFileSelected(element) {
 				var file = element.files[0];
 				element.parentNode.parentNode.lastElementChild.innerHTML = file.name;
@@ -185,6 +203,7 @@
 					form_list[index].submit();
 				}
 			}
+			*/
 			
         </script>
         
