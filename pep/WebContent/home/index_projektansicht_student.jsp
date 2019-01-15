@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1" import="java.util.*, data_management.Driver"%>
+    pageEncoding="ISO-8859-1" import="java.util.*, data_management.Driver, java.nio.file.Files,
+    java.nio.file.Path, java.nio.file.Paths, java.nio.file.attribute.BasicFileAttributes, java.text.SimpleDateFormat"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -85,6 +86,13 @@
                         <h1 class="h4">Dateien</h1>
                     </div>
                     <div>
+                    <%
+                	SimpleDateFormat dt = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+                    String teamPath = "";
+                    if(!teamname_ID.isEmpty()){
+                    	teamPath = datenhaltung.getSubCat("team", "teamname_ID", teamname_ID.get(0).get("teamname_ID"), "projektpfad").get(0).get("projektpfad");
+                    }
+                    %>
                     	<label>Laden Sie Ihre Projektdateien vor Ablauf der Frist als PDF Datei hier hoch</label>
                     	<div class="form-group row">
                             <div class="col-sm-3"><label>Bericht/Dokumentation</label></div>
@@ -93,7 +101,16 @@
                                 	<form method = "post" action = "/pep/file_upload" enctype=multipart/form-data>
                                 		<input type="file" class="custom-file-input" name="Bericht" accept=".pdf" onchange="onFileSelected(this)">     
                                     </form>
-                                    <label class="custom-file-label" for="customFile">PDF Datei suchen</label>                                                                                                                                                  
+                                    <%
+                                    String defaultText = "PDF Datei suchen";
+                                    String uploadBericht = "";
+                                    Path pathBericht = Paths.get("c:/data" + teamPath + "/Bericht.pdf");
+                                    if(Files.exists(pathBericht)){
+                                    	BasicFileAttributes attr = Files.readAttributes(pathBericht, BasicFileAttributes.class);
+                                    	uploadBericht = "Hochgeladen am " + dt.format(attr.lastModifiedTime().toMillis());
+                                    }
+                                    %>
+                                    <label class="custom-file-label" for="customFile"><%out.print(!uploadBericht.equals("") ? uploadBericht : defaultText); %></label>                                                                                                                                                  
                                 </div>
                             </div>
                         </div>
@@ -104,7 +121,15 @@
                                 	<form method = "post" action = "/pep/file_upload" enctype=multipart/form-data>
                                 		<input type="file" class="custom-file-input" name="Praesentation" accept=".pdf" onchange="onFileSelected(this)">     
                                     </form>
-                                    <label class="custom-file-label" for="customFile">PDF Datei suchen</label>
+                                    <%
+                                    String uploadPraesentation = "";
+                                    Path pathPraesentation = Paths.get("c:/data" + teamPath + "/Praesentation.pdf");
+                                    if(Files.exists(pathPraesentation)){
+                                    	BasicFileAttributes attr = Files.readAttributes(pathPraesentation, BasicFileAttributes.class);
+                                    	uploadPraesentation = "Hochgeladen am " + dt.format(attr.lastModifiedTime().toMillis());
+                                    }
+                                    %>
+                                    <label class="custom-file-label" for="customFile"><%out.print(!uploadPraesentation.equals("") ? uploadPraesentation : defaultText); %></label>
                                 </div>
                             </div>
                         </div>
@@ -115,7 +140,15 @@
                                 	<form method = "post" action = "/pep/file_upload" enctype=multipart/form-data>
                                 		<input type="file" class="custom-file-input" name="Poster" accept=".pdf" onchange="onFileSelected(this)">     
                                     </form> 
-                                    <label class="custom-file-label" for="customFile">PDF Datei suchen</label>
+                                    <%
+                                    String uploadPoster = "";
+                                    Path pathPoster = Paths.get("c:/data" + teamPath + "/Poster.pdf");
+                                    if(Files.exists(pathPoster)){
+                                    	BasicFileAttributes attr = Files.readAttributes(pathPoster, BasicFileAttributes.class);
+                                    	uploadPoster = "Hochgeladen am " + dt.format(attr.lastModifiedTime().toMillis());
+                                    }
+                                    %>
+                                    <label class="custom-file-label" for="customFile"><%out.print(!uploadPoster.equals("") ? uploadPoster : defaultText); %></label>
                                 </div>
                             </div>
                         </div>
@@ -126,7 +159,15 @@
 	                            	<form method = "post" action = "/pep/file_upload" enctype=multipart/form-data>
                                 		<input type="file" class="custom-file-input" name="Zusammenfassung" accept=".pdf" onchange="onFileSelected(this)">     
                                     </form>
-	                                <label class="custom-file-label" for="customFile">PDF Datei suchen</label>
+                                    <%
+                                    String uploadZusammenfassung = "";
+                                    Path pathZusammenfassung = Paths.get("c:/data" + teamPath + "/Zusammenfassung.pdf");
+                                    if(Files.exists(pathZusammenfassung)){
+                                    	BasicFileAttributes attr = Files.readAttributes(pathZusammenfassung, BasicFileAttributes.class);
+                                    	uploadZusammenfassung = "Hochgeladen am " + dt.format(attr.lastModifiedTime().toMillis());
+                                    }
+                                    %>
+	                                <label class="custom-file-label" for="customFile"><%out.print(!uploadZusammenfassung.equals("") ? uploadZusammenfassung : defaultText); %></label>
 	                            </div>
 	                        </div>
 	                    </div>
