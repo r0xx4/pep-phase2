@@ -386,10 +386,11 @@
                     document.querySelector('#input_email_editmode').value = "<% out.print(html_contents.get(x-1).get("accountname_ID")); %>";
                     document.querySelector('#input_matriculation_number_editmode').value = "<% out.print(html_contents.get(x-1).get("matrikelnummer")); %>";
                     document.querySelector('#select_course_of_studies_editmode').value = "<% out.print(html_contents.get(x-1).get("studiengangname_ID")); %>";
-                    document.querySelector('#select_university_chair_editmode').value = "<% out.print(html_contents.get(x-1).get("lehrstuhlname_ID")); %>";
-                    document.getElementById("select_team_editmode").disabled=true;
+                    if (datenhaltung.getSubCat("teammap", "accountname_ID", html_contents.get(x-1).get("accountname_ID")).size() > 1)
+                    	//document.querySelector('#select_team_editmode').disabled = true;
+                    	document.querySelector('#select_team_editmode').hidden = true;
                     document.querySelector('#select_team_editmode').value = "<% out.print(teams.get(x-1)); %>"; 
-            	})
+            	});
             	<%	
             }
             %>
@@ -403,7 +404,8 @@
             	data["accountname_ID"] = document.querySelector('#input_email_editmode').value;
             	data["matrikelnummer"] = document.querySelector('#input_matriculation_number_editmode').value;
             	data["studiengangname_ID"] = document.querySelector('#select_course_of_studies_editmode').value;
-            	data["team"] = document.querySelector('#select_team_editmode').value;
+            	if (!document.querySelector('#select_team_editmode').hidden)
+            		data["team"] = document.querySelector('#select_team_editmode').value;
             	post("/pep/handle_db_write_accounts", data);
             }
             
