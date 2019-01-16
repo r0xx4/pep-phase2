@@ -84,7 +84,7 @@ public class HandleDBWriteAccounts extends HttpServlet {
 			else
 			{
 				ArrayList<HashMap<String, String>> teammapname_ID_del_list = datenhaltung.getSubCat("teammap", "accountname_ID", push_into_db.get("accountname_ID"), "teammapname_ID");
-				if (!teammapname_ID_del_list.isEmpty())
+				if (!teammapname_ID_del_list.isEmpty() && teammapname_ID_del_list.size() < 2)
 				{
 					String teammapname_ID_del = teammapname_ID_del_list.get(0).get("teammapname_ID");
 					datenhaltung.deleteRow("teammap", teammapname_ID_del);

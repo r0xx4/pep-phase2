@@ -292,7 +292,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="select_team_editmode" class="col-form-label">Team:</label>
+                                <label id = "select_team_editmode_label" for="select_team_editmode" class="col-form-label">Team:</label>
                                 <select id="select_team_editmode" class="custom-select form-control" >
                                     <%
                                     for (HashMap<String, String> team : team_table)
@@ -386,9 +386,18 @@
                     document.querySelector('#input_email_editmode').value = "<% out.print(html_contents.get(x-1).get("accountname_ID")); %>";
                     document.querySelector('#input_matriculation_number_editmode').value = "<% out.print(html_contents.get(x-1).get("matrikelnummer")); %>";
                     document.querySelector('#select_course_of_studies_editmode').value = "<% out.print(html_contents.get(x-1).get("studiengangname_ID")); %>";
+                    <% 
                     if (datenhaltung.getSubCat("teammap", "accountname_ID", html_contents.get(x-1).get("accountname_ID")).size() > 1)
-                    	//document.querySelector('#select_team_editmode').disabled = true;
-                    	document.querySelector('#select_team_editmode').hidden = true;
+                    {
+                    	out.print("document.querySelector('#select_team_editmode_label').hidden = true;"); 
+                    	out.print("document.querySelector('#select_team_editmode').hidden = true;"); 
+                    }
+                    else 
+                    {
+                    	out.print("document.querySelector('#select_team_editmode_label').hidden = false;"); 
+                    	out.print("document.querySelector('#select_team_editmode').hidden = false;"); 
+                    }
+                    %>
                     document.querySelector('#select_team_editmode').value = "<% out.print(teams.get(x-1)); %>"; 
             	});
             	<%	
