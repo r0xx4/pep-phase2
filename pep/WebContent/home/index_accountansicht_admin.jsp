@@ -208,21 +208,6 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="select_team" class="col-form-label">Team:</label>
-                                <select id="select_team" class="custom-select form-control">
-                                    <%
-                                   	ArrayList<HashMap<String, String>> team_table = datenhaltung.getSubCat("team");
-                                    for (HashMap<String, String> team : team_table)
-                                    {
-                                    	%>
-                                    	<option><% out.print("Team " + team.get("teamnummer")); %></option>
-                                    	<%
-                                    }
-                                    %>
-                                    <option>null</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
                                 <label for="input_password" class="col-form-label">Passwort:</label>
                                 <input type="password" class="form-control" id="input_password">
                             </div>
@@ -230,7 +215,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
-                        <button type="button" class="btn btn-primary">Hinzufügen</button>
+                        <button id="btn_add_acc" type="button" class="btn btn-primary">Hinzufügen</button>
                     </div>
                 </div>
             </div>
@@ -295,6 +280,7 @@
                                 <label id = "select_team_editmode_label" for="select_team_editmode" class="col-form-label">Team:</label>
                                 <select id="select_team_editmode" class="custom-select form-control" >
                                     <%
+                                    ArrayList<HashMap<String, String>> team_table = datenhaltung.getSubCat("team");
                                     for (HashMap<String, String> team : team_table)
                                     {
                                     	%>
@@ -404,6 +390,30 @@
             }
             %>
             
+            document.querySelector('#select_role').addEventListener("input", inputRoleOninputEvent); 
+            function inputRoleOninputEvent(){
+                if(document.querySelector("#select_role").value == "Registrieren als"){
+                    document.getElementById("input_matriculation_number").disabled=false;
+                    document.getElementById("select_course_of_studies").disabled=false;
+                }
+                if(document.querySelector("#select_role").value == "Teilnehmer"){
+					document.getElementById("input_matriculation_number").disabled=false;
+                    document.getElementById("select_course_of_studies").disabled=false;
+                }
+                if(document.querySelector("#select_role").value == "Tutor"){
+                    document.getElementById("input_matriculation_number").disabled=true;
+                    document.getElementById("select_course_of_studies").disabled=true;
+                }
+                if(document.querySelector("#select_role").value == "Juror"){
+					document.getElementById("input_matriculation_number").disabled=true;
+                    document.getElementById("select_course_of_studies").disabled=true;
+                }
+                if(document.querySelector("#select_role").value == "Admin"){
+					document.getElementById("input_matriculation_number").disabled=true;
+                    document.getElementById("select_course_of_studies").disabled=true;
+                }
+            }
+            
             document.querySelector('#btn_save').addEventListener("click", sendPostToDb);
             function sendPostToDb(){
             	var data = {};
@@ -416,6 +426,19 @@
             	if (!document.querySelector('#select_team_editmode').hidden)
             		data["team"] = document.querySelector('#select_team_editmode').value;
             	post("/pep/handle_db_write_accounts", data);
+            }
+            
+            document.querySelector('#btn_add_acc').addEventListener("click", createNewAcc);
+            function createNewAcc(){
+            	var data = {};
+            	data["rollename_ID"] = document.querySelector('#select_role').value;
+            	data["vorname"] = document.querySelector('#input_first_name').value;
+            	data["nachname"] = document.querySelector('#input_last_name').value;
+            	data["accountname_ID"] = document.querySelector('#input_email').value;
+            	data["matrikelnummer"] = document.querySelector('#input_matriculation_number').value;
+            	data["studiengangname_ID"] = document.querySelector('#select_course_of_studies').value;
+            	data["password"] = document.querySelector('#input_password').value;
+            	post("/pep/handle_db_write_new_account", data);
             }
             
         </script>
