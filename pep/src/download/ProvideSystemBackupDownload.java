@@ -2,10 +2,12 @@ package download;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.zip.ZipEntry;
@@ -45,42 +47,60 @@ public class ProvideSystemBackupDownload extends HttpServlet {
 			f2.delete();
 		}
 		
-		//"Backup"-Ordner C:\Backup\ erstellen
+		//"Backup"-Ordner C:\Backup\ und C:\Old Backups\ erstellen
 		new File("C:\\Backup").mkdir();
+		new File("C:\\Old Backups").mkdir();
 		
 		//data-Ordner kopieren und unter C:\Backup\ einfügen
-		copyFolder(new File("C:\\data\\"), new File("C:\\Backup\\"));
+		try {
+			copyFolder(new File("C:\\data\\"), new File("C:\\Backup\\Projektdaten\\"));
+		}catch(FileNotFoundException e) {
+			
+		}
 		
 		//Datenbank unter C:\Backup\ speichern
 			//   @IVAN BITTE FUNKTION ERSTELLEN
 		
-		//Ordner C:\Backup\ zippen und unter C:\backup.zip speichern
-		FileOutputStream fos = new FileOutputStream("C:\\Old Backups\\backup.zip");
-        File d = new File("C:\\Backup");
-        File[] srcFiles = d.listFiles();
-        
-        ZipOutputStream zipOut = new ZipOutputStream(fos);
-        for(int i=0; i<srcFiles.length; i++) {
-            File fileToZip = srcFiles[i];
-            FileInputStream fis = new FileInputStream(fileToZip);
-            ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
-            zipOut.putNextEntry(zipEntry);
- 
-            byte[] bytes = new byte[1024];
-            int length;
-            while((length = fis.read(bytes)) >= 0) {
-                zipOut.write(bytes, 0, length);
-            }
-            fis.close();
-        }
-        zipOut.close();
-        fos.close();
+		//Ordner C:\Backup\ zippen und unter C:\backup.zip speichern      
+        try {
+			zipFolder("C:\\Backup", "C:\\Old Backups\\backup.zip");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//Zip datei übertragenzu Client
-		
-		
-		RequestDispatcher rd = request.getRequestDispatcher("/home/index_startseite_admin.jsp");
-		rd.forward(request,  response);
+        PrintWriter out = response.getWriter();
+
+        try {
+        	
+        	File datei = new File("C:\\Old Backups\\backup.zip");
+        	if(datei.exists()) {
+        		response.setContentType("application/pdf");
+        		response.setContentType("APPLICATION/OCTET-STREAM");
+                response.setHeader("Content-Disposition", "attachment; filename=\""+"backup.zip"+"\"");
+        		
+            	FileInputStream fileInputStream;
+            	fileInputStream = new FileInputStream("C:\\Old Backups\\backup.zip");
+            	
+        		int i;
+                while((i = fileInputStream.read()) != -1) {
+                    out.write(i);
+                }
+                
+                fileInputStream.close();
+                out.close();
+        	}
+        	else {
+        		out.println("<script>");
+        		out.println("window.open(\"/pep/home\", \"_self\")");
+        		out.println("</script>");
+        		out.close();
+        	}
+        	
+        }catch(FileNotFoundException e) {
+        	
+        }
 	}
 
 	/**
@@ -103,61 +123,100 @@ public class ProvideSystemBackupDownload extends HttpServlet {
 	}
 
 	private static void copyFolder(File source, File destination) throws IOException {
-		 if (source.isDirectory())
-		    {
-		        if (!destination.exists())
-		        {
-		            destination.mkdirs();
-		        }
+		if (source.isDirectory()) {
+	        if (!destination.exists()) {
+	            destination.mkdirs();
+	        }
 
-		        String files[] = source.list();
+	        String files[] = source.list();
 
-		        for (String file : files)
-		        {
-		            File srcFile = new File(source, file);
-		            File destFile = new File(destination, file);
+	        for (String file : files) {
+	            File srcFile = new File(source, file);
+	            File destFile = new File(destination, file);
 
-		            copyFolder(srcFile, destFile);
-		        }
-		    }
-		    else
-		    {
-		        InputStream in = null;
-		        OutputStream out = null;
+	            copyFolder(srcFile, destFile);
+	        }
+	    }
+	    else {
+	        InputStream in = null;
+	        OutputStream out = null;
 
-		        try
-		        {
-		            in = new FileInputStream(source);
-		            out = new FileOutputStream(destination);
+	        try
+	        {
+	            in = new FileInputStream(source);
+	            out = new FileOutputStream(destination);
 
-		            byte[] buffer = new byte[1024];
+	            byte[] buffer = new byte[1024];
 
-		            int length;
-		            while ((length = in.read(buffer)) > 0)
-		            {
-		                out.write(buffer, 0, length);
-		            }
-		        }
-		        catch (Exception e)
-		        {
-		            try
-		            {
-		                in.close();
-		            }
-		            catch (IOException e1)
-		            {
-		                e1.printStackTrace();
-		            }
+	            int length;
+	            while ((length = in.read(buffer)) > 0)
+	            {
+	                out.write(buffer, 0, length);
+	            }
+	            in.close();
+	            out.close();
+	        }
+	        catch (Exception e)
+	        {
+	            try
+	            {
+	                in.close();
+	            }
+	            catch (IOException e1)
+	            {
+	                e1.printStackTrace();
+	            }
 
-		            try
-		            {
-		                out.close();
-		            }
-		            catch (IOException e1)
-		            {
-		                e1.printStackTrace();
-		            }
-		        }
-		    }
+	            try
+	            {
+	                out.close();
+	            }
+	            catch (IOException e1)
+	            {
+	                e1.printStackTrace();
+	            }
+	        }
+	    }
 	}
+	
+	
+	static public void zipFolder(String srcFolder, String destZipFile) throws Exception {
+	    ZipOutputStream zip = null;
+	    FileOutputStream fileWriter = null;
+	    fileWriter = new FileOutputStream(destZipFile);
+	    zip = new ZipOutputStream(fileWriter);
+	    addFolderToZip("", srcFolder, zip);
+	    zip.flush();
+	    zip.close();
+	  }
+	  static private void addFileToZip(String path, String srcFile, ZipOutputStream zip)
+	      throws Exception {
+	    File folder = new File(srcFile);
+	    if (folder.isDirectory()) {
+	      addFolderToZip(path, srcFile, zip);
+	    } else {
+	      byte[] buf = new byte[1024];
+	      int len;
+	      FileInputStream in = new FileInputStream(srcFile);
+	      zip.putNextEntry(new ZipEntry(path + "/" + folder.getName()));
+	      while ((len = in.read(buf)) > 0) {
+	        zip.write(buf, 0, len);
+	      }
+	    }
+	  }
+
+	  static private void addFolderToZip(String path, String srcFolder, ZipOutputStream zip)
+	      throws Exception {
+	    File folder = new File(srcFolder);
+
+	    for (String fileName : folder.list()) {
+	      if (path.equals("")) {
+	        addFileToZip(folder.getName(), srcFolder + "/" + fileName, zip);
+	      } else {
+	        addFileToZip(path + "/" + folder.getName(), srcFolder + "/" +   fileName, zip);
+	      }
+	    }
+	  }
+
+	
 }
