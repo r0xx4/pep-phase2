@@ -33,15 +33,6 @@
 
     <body>
         <!-- navbar-->
-        <%
-			Driver datenhaltung = new Driver();
-			String user = datenhaltung.getSessionUser(request.getSession().getAttribute("session_id").toString());
-			String rolle = datenhaltung.getSubCat("account", user).get(0).get("rollename_ID");
-			HashMap<String, String> html_contents = datenhaltung.getSubCat("account", user).get(0);
-			String session_ID = (String)(session.getAttribute("session_id"));
-	        String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
-	        ArrayList<HashMap<String, String>> teamname_ID = datenhaltung.getSubCat("teammap", "accountname_ID", accountname_ID, "teamname_ID");
-		%>
         <header class="header">
             <nav class="navbar navbar-expand-lg px-4 py-2 bg-white shadow"><a href="#" class="sidebar-toggler text-gray-500 mr-4 mr-lg-5 lead"><i class="fas fa-align-left"></i></a><a href="#" class="navbar-brand font-weight-bold text-uppercase text-base">Planungs- und Entwicklungsprojekt</a>
                 <ul class="ml-auto d-flex align-items-center list-unstyled mb-0">
@@ -55,14 +46,8 @@
             <div id="sidebar" class="sidebar py-3">
                 <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Main</div>
                 <ul class="sidebar-menu list-unstyled">
-                    <li id="link_home" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted active"><i class="o-home-1 mr-3 text-gray"></i><span>Home</span></a></li>
-                    <%
-                    if(teamname_ID.isEmpty()){
-                    	%>
-                    	 <li id="link_create_team" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-earth-globe-1 mr-3 text-gray"></i><span>Team erstellen</span></a></li>
-                    	<%
-                    }
-                    %>
+                    <li id="link_home" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-home-1 mr-3 text-gray"></i><span>Home</span></a></li>
+                    <li id="link_create_team" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted active"><i class="o-earth-globe-1 mr-3 text-gray"></i><span>Team erstellen</span></a></li>
                     <li id="link_show_project" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-archive-1 mr-3 text-gray"></i><span>Projekt</span></a></li>
                 </ul>
                 <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Meine Daten</div>
@@ -73,56 +58,19 @@
             <div class="page-holder w-100 d-flex flex-wrap">
                 <div class="container-fluid px-xl-5">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Startseite</h1>
-                
+                        <h1 class="h2">Team erstellen</h1>
+                    					<%
+						Driver datenhaltung = new Driver();
+						String user = datenhaltung.getSessionUser(request.getSession().getAttribute("session_id").toString());
+						String rolle = datenhaltung.getSubCat("account", user).get(0).get("rollename_ID");
+						String session_ID = (String)(session.getAttribute("session_id"));
+				        String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
+						ArrayList<HashMap<String, String>> teamname_ID = datenhaltung.getSubCat("teammap", "accountname_ID", accountname_ID, "teamname_ID");
+						HashMap<String, String> html_contents = datenhaltung.getSubCat("account", user).get(0);
+					%>
 				</div>
-				<h5>Hallo <%out.print(html_contents.get("vorname"));%> <%out.print(html_contents.get("nachname"));%>,</h5>
-				Das Planungs und Entwicklunsprojekt beefindet sich momentan in
-				folgender Phase: <%out.print(datenhaltung.getCurrentPhase());%>
-				<div class="pt-3 pb-2">
-                <%
-                String currentPhase = datenhaltung.getCurrentPhase();
-                if(currentPhase == null){
-                	
-                }
-                else if(currentPhase.equals("Registrierungsphase")){
-                	%>
-                    <strong>Herlichen Glückwunsch! Sie haben es geschafft sich zu regestrieren!</strong><br>
-                    - Warten Sie auf die nächste Phase und somit auf neue Anweisungen, die Sie hier einsehen können<br>
-                    <%
-                }
-                else if(currentPhase.equals("Projektanmeldephase")){
-                	if(rolle == null){
-                		
-                	}
-                	else if(rolle.equals("Teilnehmer")){
-                		%>
-                    	<strong>Ihre Aufgaben während der Anmelde-Phase:</strong><br>
-            			- Ihr Teamleiter sollte sich mit einem Formular melden, das Sie unterschreiben müssen, um für das PEP angemeldet zu werden
-                    	<%
-                	}
-                	else if(rolle.equals("Teamleiter")){
-                		%>
-                		<strong>Herlichen Glückwunsch! Sie wurden zum Teamleiter gewählt!</strong><br>
-        				- Drucken Sie unter <strong >"Startseite"</strong> das Formular aus, lassen Sie es von ihren Teammitgliedern unterschreiben und geben Sie es im Prüfungsamt ab<br>
-        				<label class="pt-2">Laden Sie hier das Anmeldeformular für das Projekt herunter und lassen Sie es von allen Teammitgliedern unterschreiben: <a href="/pep/team_list_pdf?<% out.print(user); %>">Anmeldeformular</a></label></br>
-                		<%
-                	}
-                }
-                else if(currentPhase.equals("Projekterarbeitungsphase")){
-                	%>
-                	<strong>Ihre Aufgaben während der Projekterarbeitungs-Phase:</strong><br>
-        			- Unter <strong>"Projekt"</strong> sollten Sie den Speicher nutzen, um ihre Projektdateien hochzuladen<br>
-        			- <strong>Achtung!</strong> Die von Ihnnen zuletzt hochgeladene Datei wird Überschrieben!
-                	<%
-                }
-                else if(currentPhase.equals("Projektbewertungsphase")){
-                	%>
-                	<strong>In der Bewertungsphase haben Sie die Aufgabe, ihr Projet vorzustellen</strong>
-                    <%
-                }
-                %>
-                </div>
+				
+                
                 </div>
                 <footer class="footer bg-white shadow align-self-end py-3 px-xl-5 w-100">
                     <div class="container-fluid">

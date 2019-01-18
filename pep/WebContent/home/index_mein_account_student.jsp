@@ -55,6 +55,15 @@
 </head>
 
 <body>
+	<%
+		Driver datenhaltung = new Driver();
+		String user = datenhaltung.getSessionUser(request.getSession().getAttribute("session_id").toString());
+		HashMap<String, String> html_contents = datenhaltung.getSubCat("account", user).get(0);
+		String session_ID = (String)(session.getAttribute("session_id"));
+        String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
+        ArrayList<HashMap<String, String>> teamname_ID = datenhaltung.getSubCat("teammap", "accountname_ID", accountname_ID, "teamname_ID");
+	%>
+
 	<!-- navbar-->
 	<header class="header">
 		<nav class="navbar navbar-expand-lg px-4 py-2 bg-white shadow">
@@ -76,6 +85,13 @@
 				<li id="link_home" class="sidebar-list-item"><a href="#"
 					class="sidebar-link text-muted"><i
 						class="o-home-1 mr-3 text-gray"></i><span>Home</span></a></li>
+				<%
+                    if(teamname_ID.isEmpty()){
+                    	%>
+                    	 <li id="link_create_team" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-earth-globe-1 mr-3 text-gray"></i><span>Team erstellen</span></a></li>
+                    	<%
+                    }
+                    %>
 				<li id="link_show_project" class="sidebar-list-item"><a
 					href="#" class="sidebar-link text-muted"><i
 						class="o-archive-1 mr-3 text-gray"></i><span>Projekt</span></a></li>
@@ -98,11 +114,6 @@
 				<div
 					class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-1 mb-3 border-bottom">
 					<h1 class="h4">Persönliche Daten</h1>
-					<%
-						Driver datenhaltung = new Driver();
-						String user = datenhaltung.getSessionUser(request.getSession().getAttribute("session_id").toString());
-						HashMap<String, String> html_contents = datenhaltung.getSubCat("account", user).get(0);
-					%>
 				</div>
 				<div>
 					<div class="form-group row">
@@ -212,6 +223,10 @@
         document.querySelector('#link_personal_settings').addEventListener("click", klickLinkPersonalSettingsEvent); 
         function klickLinkPersonalSettingsEvent(){
         	window.open("/pep/home/view_personal_info", "_self");
+        }
+        document.querySelector('#link_create_team').addEventListener("click", klickLinkCreateTeam); 
+        function klickLinkCreateTeam(){
+        	window.open("/pep/home/create_team", "_self");
         }
 		document.querySelector('#link_show_project').addEventListener("click",
 				klickLinkShowProjectEvent);

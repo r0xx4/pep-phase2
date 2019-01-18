@@ -1,6 +1,5 @@
 package home;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,23 +15,25 @@ import javax.servlet.http.HttpSession;
 import data_management.Driver;
 
 /**
- * Servlet implementation class ShowProject
+ * Servlet implementation class CreateTeam
  */
-@WebServlet("/home/show_project")
-public class ShowProject extends HttpServlet {
+@WebServlet("/home/create_team")
+public class CreateTeam extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ShowProject() {
+    public CreateTeam() {
         super();
+        // TODO Auto-generated constructor stub
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		response.setHeader("Cache-Control",  "must-revalidate");
 		Driver datenhaltung = new Driver();
 		HttpSession session = request.getSession();
@@ -50,12 +51,12 @@ public class ShowProject extends HttpServlet {
 				System.out.println(session_ID);
 				if (rolle.equals("Teilnehmer") || rolle.equals("Teamleiter"))
 				{
-					if(currentPhase == null || team.isEmpty()) {
-						RequestDispatcher rd = request.getRequestDispatcher("/home/index_projektansicht_student_fehlermeldung.jsp");
+					if(currentPhase == null || !team.isEmpty()) {
+						RequestDispatcher rd = request.getRequestDispatcher("/home");
 						rd.forward(request,  response);
 					}
 					else {
-						RequestDispatcher rd = request.getRequestDispatcher("/home/index_projektansicht_student.jsp");
+						RequestDispatcher rd = request.getRequestDispatcher("/home/index_team_erstellen_student.jsp");
 						rd.forward(request,  response);
 					}
 				}
@@ -76,13 +77,12 @@ public class ShowProject extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-	
-	
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

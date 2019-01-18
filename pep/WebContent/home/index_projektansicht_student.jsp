@@ -26,6 +26,13 @@
     </head>
 
     <body>
+    	<%
+    	Driver datenhaltung = new Driver();
+        String session_ID = (String)(session.getAttribute("session_id"));
+        String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
+        ArrayList<HashMap<String, String>> teamname_ID = datenhaltung.getSubCat("teammap", "accountname_ID", accountname_ID, "teamname_ID");
+    	%>
+    
         <!-- navbar-->
         <header class="header">
             <nav class="navbar navbar-expand-lg px-4 py-2 bg-white shadow"><a href="#" class="sidebar-toggler text-gray-500 mr-4 mr-lg-5 lead"><i class="fas fa-align-left"></i></a><a href="#" class="navbar-brand font-weight-bold text-uppercase text-base">Planungs- und Entwicklungsprojekt</a>
@@ -41,6 +48,13 @@
                 <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Main</div>
                 <ul class="sidebar-menu list-unstyled">
                     <li id="link_home" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-home-1 mr-3 text-gray"></i><span>Home</span></a></li>
+                    <%
+                    if(teamname_ID.isEmpty()){
+                    	%>
+                    	 <li id="link_create_team" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-earth-globe-1 mr-3 text-gray"></i><span>Team erstellen</span></a></li>
+                    	<%
+                    }
+                    %>
                     <li id="link_show_project" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted active"><i class="o-archive-1 mr-3 text-gray"></i><span>Projekt</span></a></li>
                 </ul>
                 <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Meine Daten</div>
@@ -58,10 +72,6 @@
                     </div>
                     <div>
                     <% 
-                    Driver datenhaltung = new Driver();
-                    String session_ID = (String)(session.getAttribute("session_id"));
-                    String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
-                    ArrayList<HashMap<String, String>> teamname_ID = datenhaltung.getSubCat("teammap", "accountname_ID", accountname_ID, "teamname_ID");
                     if (!teamname_ID.isEmpty())
                     {
                     	ArrayList<HashMap<String, String>> teammitglieder = datenhaltung.getSubCat("teammap", "teamname_ID", teamname_ID.get(0).get("teamname_ID"), "accountname_ID");
@@ -74,8 +84,8 @@
                     		{
                         		count++;
                     			HashMap<String, String> accountdata = datenhaltung.getSubCat("account", mail).get(0);
-                    			%>
-                    			<% out.print(count + ". " + accountdata.get("vorname") + " " + accountdata.get("nachname") + " (" + mail + ")"); %></br>
+                    			
+                    			out.print(count + ". " + accountdata.get("vorname") + " " + accountdata.get("nachname") + " (" + mail + ")"); %></br>
                     			<%
                     		}
                     	}
@@ -224,6 +234,10 @@
 	        document.querySelector('#link_personal_settings').addEventListener("click", klickLinkPersonalSettingsEvent); 
 	        function klickLinkPersonalSettingsEvent(){
 	        	window.open("/pep/home/view_personal_info", "_self");
+	        }
+	        document.querySelector('#link_create_team').addEventListener("click", klickLinkCreateTeam); 
+	        function klickLinkCreateTeam(){
+	        	window.open("/pep/home/create_team", "_self");
 	        }
 			document.querySelector('#link_show_project').addEventListener("click",
 					klickLinkShowProjectEvent);
