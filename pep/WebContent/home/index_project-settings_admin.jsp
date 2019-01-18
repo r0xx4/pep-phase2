@@ -96,7 +96,7 @@
                     ArrayList<HashMap<String, String>> phasen = datenhaltung.getSubCat("phase");
                     %>
                     <div>
-                        <label>Tragen Sie die Start- und Enddaten für die einzelnen Phasen ein</label>
+                        <label>Tragen Sie Daten ein ab bzw. bis zu denen bestimmte Aktionen verfügbar sein sollen</label>
                         <div class="form-group row">
                             <div class="form-group col-sm-3">
                                 <label>Registrierungsphase</label>
@@ -110,6 +110,43 @@
                                 <input id="input_end_date_registration_phase" type="date" class="form-control">
                             </div> 
                         </div>  
+                        <div class="form-group row">
+                            <div class="form-group col-sm-3">
+                                <label>Abgabefrist Bericht/Dokumentation</label>
+                            </div> 
+                            <div class="form-group col-sm-8">
+                                <label for="input_deadline_documentation">Ende:</label>
+                                <input id="input_deadline_documentation" type="date" class="form-control">
+                            </div> 
+                        </div>  
+                        <div class="form-group row">
+                            <div class="form-group col-sm-3">
+                                <label>Abgabefrist Projekt Präsentation</label>
+                            </div> 
+                            <div class="form-group col-sm-8">
+                                <label for="input_deadline_presentation">Ende:</label>
+                                <input id="input_deadline_presentation" type="date" class="form-control">
+                            </div> 
+                        </div>  
+                        <div class="form-group row">
+                            <div class="form-group col-sm-3">
+                                <label>Abgabefrist Poster</label>
+                            </div> 
+                            <div class="form-group col-sm-8">
+                                <label for="input_deadline_poster">Ende:</label>
+                                <input id="input_deadline_poster" type="date" class="form-control">
+                            </div> 
+                        </div>  
+                        <div class="form-group row">
+                            <div class="form-group col-sm-3">
+                                <label>Abgabefrist Einseitige Zusammenfassung</label>
+                            </div> 
+                            <div class="form-group col-sm-8">
+                                <label for="input_deadline_summary">Ende:</label>
+                                <input id="input_deadline_summary" type="date" class="form-control">
+                            </div> 
+                        </div>  
+                        <!-- 
                         <div class="form-group row">
                             <div class="form-group col-sm-3">
                                 <label>Projektanmeldephase</label>
@@ -135,8 +172,7 @@
                                 <label for="input_end_date_project_phase">Ende:</label>
                                 <input id="input_end_date_project_phase" type="date" class="form-control">
                             </div> 
-                        </div>   
-                        <!-- 
+                        </div>    
                         <div class="form-group row">
                             <div class="form-group col-sm-3">
                                 <label>Projektbewertungsphase</label>
