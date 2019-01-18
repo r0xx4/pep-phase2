@@ -441,6 +441,15 @@
             	post("/pep/handle_db_write_new_account", data);
             }
             
+            document.querySelector('#btn_delete_groupe').addEventListener("click", deleteAccount);
+            function deleteAccount(){
+            	var del = {};
+            	del["type"] = "account";
+            	del["id"] = document.querySelector('#input_email_editmode').value;
+            	post("/pep/delete_entry", del);
+            	console.log("sent post");
+			}
+            
         </script>
         
         <!-- JavaScript files-->

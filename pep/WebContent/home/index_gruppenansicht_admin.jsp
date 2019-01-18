@@ -399,6 +399,15 @@
 		<%
 		}
 		%>
+		
+		document.querySelector('#btn_delete_groupe').addEventListener("click", deleteAccount);
+        function deleteAccount(){
+        	var del = {};
+        	del["type"] = "organisationseinheit";
+        	del["id"] = document.querySelector('#input_name_new_group_editmode').value;
+        	post("/pep/delete_entry", del);
+		}
+        
 	</script>
 
 	<!-- JavaScript files-->

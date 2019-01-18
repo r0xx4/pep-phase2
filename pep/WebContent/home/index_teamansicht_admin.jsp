@@ -499,6 +499,14 @@
             	post("/pep/handle_db_write_create_teams", data);
             }
             
+            document.querySelector('#btn_delete_groupe').addEventListener("click", deleteAccount);
+            function deleteAccount(){
+            	var del = {};
+            	del["type"] = "team";
+            	del["id"] = document.querySelector('#input_team_name_editmode').value;
+            	post("/pep/delete_entry", del);
+			}
+            
         </script>
         
         <!-- JavaScript files-->
