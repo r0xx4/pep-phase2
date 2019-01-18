@@ -181,9 +181,12 @@
                                 	ArrayList<HashMap<String, String>> all_tutors = datenhaltung.getSubCat("account", "rollename_ID", "Tutor", "accountname_ID");
                                 	for (HashMap<String, String> t : all_tutors)
                                 	{
+                                        ArrayList<HashMap<String, String>> lehrstuhl_inhaber = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", t.get("accountname_ID"));
+										if(!lehrstuhl_inhaber.isEmpty()){
                                 		%>
                                 		<option><% out.print(t.get("accountname_ID")); %></option>
                                 		<%
+										}
                                 	}
                                 	%>
                                 </select>
@@ -237,9 +240,12 @@
                                 	<%
                                 	for (HashMap<String, String> t : all_tutors)
                                 	{
+                                        ArrayList<HashMap<String, String>> lehrstuhl_inhaber = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", t.get("accountname_ID"));
+										if(!lehrstuhl_inhaber.isEmpty()){
                                 		%>
                                 		<option><% out.print(t.get("accountname_ID")); %></option>
                                 		<%
+										}
                                 	}
                                 	%>
                                 </select>
