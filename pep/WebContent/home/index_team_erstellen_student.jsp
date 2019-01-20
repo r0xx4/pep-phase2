@@ -144,6 +144,26 @@
 
         <script>   
             //Hier Javascript Code
+            function post(path, params, method) {
+                method = method || "post";
+                var form = document.createElement("form");
+                form.setAttribute("method", method);
+                form.setAttribute("action", path);
+
+                for(var key in params) {
+                    if(params.hasOwnProperty(key)) {
+                        var hiddenField = document.createElement("input");
+                        hiddenField.setAttribute("type", "hidden");
+                        hiddenField.setAttribute("name", key);
+                        hiddenField.setAttribute("value", params[key]);
+                        form.appendChild(hiddenField);
+                    }
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+            
             document.querySelector('#link_home').addEventListener("click",
 				klickLinkHomeEvent);
 			function klickLinkHomeEvent() {
@@ -173,9 +193,6 @@
 			function klickBtnSubmitEvent() {
 				var z=0;
 				var data = {};
-				data['betreuer1'] = document.getElementById('select_supervisor_1').value;
-				data['betreuer2'] = document.getElementById('select_supervisor_2').value;
-				data['projekttitel'] = document.getElementById('input_project_name').value;
 				<%
 				for(int i=0; i<team_max -1; i++){ 
 				%>
@@ -187,7 +204,10 @@
 				}
                 %>
                 if(z >= <% out.print(team_min); %>-1 && z <= <% out.print(team_max); %>-1){
-                	
+    				data['betreuer1'] = document.getElementById('select_supervisor_1').value;
+    				data['betreuer2'] = document.getElementById('select_supervisor_2').value;
+    				data['projekttitel'] = document.getElementById('input_project_name').value;
+                	post("/pep/handle_db_write_team_request", data);
                 }
                 else{
                 	window.alert("Die Anzahl der eingetragenen Teammitglieder ist zu niedrig. Ein Team muss mindestens aus " + <% out.print(team_min); %> + " Mitgliedern bestehen!");

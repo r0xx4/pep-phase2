@@ -60,13 +60,12 @@
                         <table class="table">
                             <thead class="thead-dark">
                                 <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Kennnummer</th>
+                                    <th scope="col">Datum</th>
+                                    <th scope="col">Antragsteller</th>
                                     <th scope="col">Studenten</th>
-                                    <th scope="col">Betreuer 1</th>
-                                    <th scope="col">Betreuer 2</th>
                                     <th scope="col">Gruppe</th>
                                     <th scope="col">Projekt</th>
+                                    <th scope="col"></th>
                                     <th scope="col"></th>
                                     <th scope="col"></th>
                                 </tr>
@@ -81,61 +80,32 @@
                            			tutors.add(new HashMap<String, String>());
                            		%>
 	                           		<tr>
-	                                    <th><% out.print("Team " + row.get("teamnummer")); %></th>
-	                                    <td><% out.print(row.get("teamname_ID")); %></td>
+	                                    <th><% out.print("23.01.2019"); %></th>
+	                                    <td><% out.print("karl@teilnehmer.de"); %></td>
 	                                    <% 
 	                                    int counter = 0;
-	                                    ArrayList<HashMap<String, String>> accountsInTeam = datenhaltung.getSubCat("teammap", "teamname_ID", row.get("teamname_ID"), "accountname_ID");
+	                                    /* ArrayList<HashMap<String, String>> accountsInTeam = datenhaltung.getSubCat("teammap", "teamname_ID", row.get("teamname_ID"), "accountname_ID");
 	                                    for(HashMap<String, String> account : accountsInTeam){
 	                                    	if(!datenhaltung.getSubCat("account", "accountname_ID", account.get("accountname_ID"), "rollename_ID").get(0).get("rollename_ID").equals("Tutor")){
 	                                    		counter++;
 	                                    	}
 	
-	                                    }
+	                                    } */
 	                                   
 	                                    %>
 	                                    <td> <% out.print(counter); %></td>
 	                                    <%
-	                                    ArrayList<HashMap<String, String>> accounts_in_team = datenhaltung.getSubCat("teammap", "teamname_ID", row.get("teamname_ID"), "accountname_ID");
-	                                    String tutor_1 = null;
-	                                    for (HashMap<String, String> account : accounts_in_team)
-	                                    {
-	                                    	if (datenhaltung.getSubCat("account", "accountname_ID", account.get("accountname_ID"), "rollename_ID").get(0).get("rollename_ID").equals("Tutor"))
-	                                    	{
-	                                    		tutor_1 = account.get("accountname_ID");
-	                                    		tutors.get(tutors.size()-1).put("tutor1", tutor_1);
-	                                    		break;
-	                                    	}
-	                                    }
-	                                    %>
-	                                    <td><% out.print(tutor_1); %></td>
-	                                    <%
-	                                    String tutor_2 = null;
-	                                    boolean appeared = false;
-	                                    for (HashMap<String, String> account : accounts_in_team)
-	                                    {
-	                                    	if (datenhaltung.getSubCat("account", "accountname_ID", account.get("accountname_ID"), "rollename_ID").get(0).get("rollename_ID").equals("Tutor"))
-	                                    	{
-	                                    		if (appeared)
-	                                    		{
-	                                    			tutor_2 = account.get("accountname_ID");
-	                                    			tutors.get(tutors.size()-1).put("tutor2", tutor_2);
-		                                    		break;
-	                                    		}
-	                                    		appeared = true;
-	                                    	}
-	                                    }
-	                                    %>
-	                                    <td><% out.print(tutor_2); %></td>
-	                                    <% 
-	                        			ArrayList<HashMap<String, String>> lehrstuhl_tut_1 = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", tutors.get(tutors.size()-1).get("tutor1"), "lehrstuhlname_ID");
+	                        			/* ArrayList<HashMap<String, String>> lehrstuhl_tut_1 = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", tutors.get(tutors.size()-1).get("tutor1"), "lehrstuhlname_ID");
 	                                    String lehrstuhlname_ID = lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID");
 	                    				String org_einheit_lehrstuhl = datenhaltung.getSubCat("lehrstuhl", "lehrstuhlname_ID", lehrstuhlname_ID, "organisationseinheitname_ID").get(0).get("organisationseinheitname_ID");
-	                                    %>
-	                                    <td><% out.print(org_einheit_lehrstuhl); %></td>
+	                                     */
+	                                     %>
+	                                    <td><% /* out.print(org_einheit_lehrstuhl); */ %></td>
 	                                    <td><% out.print(row.get("projekttitel")); %></td>
-	                                    <td><button id="btn_valuation_<% out.print(tutors.size()); %>" data-toggle="modal" data-target="#modal_valuation" class="btn btn-sm btn-outline-info text-center col-sm">Bewertung</button></td>
-                                    	<td><button id="btn_edit_team_<% out.print(tutors.size()); %>" data-toggle="modal" data-target="#modal_edit_team" class="btn btn-sm btn-outline-secondary text-center col-sm">Bearbeiten</button></td>
+	                                    
+	                                    <td><a href="/pep/home/show_accounts"><i class="far fa-trash-alt" style="color:red"></i></a></td>
+	                                    <td><a href="/pep/home/show_accounts"><i class="fas fa-info-circle" style="color:blue"></i></a></td>
+                                    	<td><button id="btn_confirm_team_<% out.print(tutors.size()); %>" class="btn btn-sm btn-primary text-center col-sm">Team Bestätigen</button></td>
 	                                </tr>
                            			<%
                            		}
@@ -155,7 +125,6 @@
                 </footer>
             </div>
         </div>
-
 
         <script>   
             //Hier Javascript Code
