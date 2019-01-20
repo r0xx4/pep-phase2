@@ -71,6 +71,9 @@
 				<li id="link_show_all_accounts" class="sidebar-list-item"><a
 					href="#" class="sidebar-link text-muted"><i
 						class="o-profile-1 mr-3 text-gray"></i><span>Accounts</span></a></li>
+				<li id="link_show_all_team_requests" class="sidebar-list-item"><a
+					href="#" class="sidebar-link text-muted"><i
+						class="o-paper-stack-1 mr-3 text-gray"></i><span>Team Anträge</span></a></li>
 				<li id="link_project_settings" class="sidebar-list-item"><a
 					href="#" class="sidebar-link text-muted"><i
 						class="o-imac-screen-1 mr-3 text-gray"></i><span>Projekt
@@ -249,6 +252,11 @@
 				"click", klickLinkShowAllAccountsEvent);
 		function klickLinkShowAllAccountsEvent() {
 			window.open("/pep/home/show_accounts", "_self");
+		}
+		document.querySelector('#link_show_all_team_requests').addEventListener(
+				"click", klickLinkShowAllTeamRequestsEvent);
+		function klickLinkShowAllTeamRequestsEvent() {
+			window.open("/pep/home/show_team_requests", "_self");
 		}
 		document.querySelector('#link_project_settings').addEventListener(
 				"click", klickLinkGeneralSettingsEvent);

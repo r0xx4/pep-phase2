@@ -53,6 +53,7 @@
                     <li id="link_show_all_groups" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-archive-folder-1 mr-3 text-gray"></i><span>Gruppen</span></a></li>
                     <li id="link_show_all_teams" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-archive-1 mr-3 text-gray"></i><span>Teams</span></a></li>
                     <li id="link_show_all_accounts" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-profile-1 mr-3 text-gray"></i><span>Accounts</span></a></li>
+                    <li id="link_show_all_team_requests" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-paper-stack-1 mr-3 text-gray"></i><span>Team Anträge</span></a></li>
                     <li id="link_project_settings" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted active"><i class="o-imac-screen-1 mr-3 text-gray"></i><span>Projekt Settings</span></a></li>
                 </ul>
                 <div class="text-gray-400 text-uppercase px-3 px-lg-4 py-4 font-weight-bold small headings-font-family">Meine Daten</div>
@@ -715,6 +716,10 @@
                 //Hier Code für zeige alle Accounts Button gedrückt
                 window.open("/pep/home/show_accounts", "_self");
             }
+            document.querySelector('#link_show_all_team_requests').addEventListener("click", klickLinkShowAllTeamRequestsEvent);
+    		function klickLinkShowAllTeamRequestsEvent() {
+    			window.open("/pep/home/show_team_requests", "_self");
+    		}
             document.querySelector('#link_project_settings').addEventListener("click", clickLinkGeneralSettingsEvent); 
             function clickLinkGeneralSettingsEvent(){
                 //Hier Code für zeige Projekt Einstellungen Button gedrückt
