@@ -59,19 +59,77 @@
                 <div class="container-fluid px-xl-5">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Team erstellen</h1>
-                    					<%
+       					<%
 						Driver datenhaltung = new Driver();
 						String user = datenhaltung.getSessionUser(request.getSession().getAttribute("session_id").toString());
 						String rolle = datenhaltung.getSubCat("account", user).get(0).get("rollename_ID");
 						String session_ID = (String)(session.getAttribute("session_id"));
 				        String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
+				        int team_min = Integer.parseInt(datenhaltung.getSubCat("projectconfiguration", "projectconfigurationname_ID", "1", "team_Min").get(0).get("team_Min"));
+				        int team_max = Integer.parseInt(datenhaltung.getSubCat("projectconfiguration", "projectconfigurationname_ID", "1", "team_Max").get(0).get("team_Max"));
 						ArrayList<HashMap<String, String>> teamname_ID = datenhaltung.getSubCat("teammap", "accountname_ID", accountname_ID, "teamname_ID");
 						HashMap<String, String> html_contents = datenhaltung.getSubCat("account", user).get(0);
-					%>
-				</div>
-				
-                
+						%>
+					</div>
+					<div>
+						<div class="form-group">
+							<label for="input_team_name">Teamname:</label> 
+							<input
+							id="input_team_name" 
+							value="*wird generiert*" readonly type="text" class="form-control">
+						</div>
+						<div class="form-group">
+	                    	<label for="select_supervisor_1" class="col-form-label">Betreuer 1:</label>
+	                       	<select id="select_supervisor_1" class="custom-select form-control">
+	                        	<%
+	                           		ArrayList<HashMap<String, String>> all_tutors = datenhaltung.getSubCat("account", "rollename_ID", "Tutor", "accountname_ID");
+	                               	for (HashMap<String, String> t : all_tutors)
+	                               	{
+	                                	ArrayList<HashMap<String, String>> lehrstuhl_inhaber = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", t.get("accountname_ID"));
+										if(!lehrstuhl_inhaber.isEmpty()){
+	                                		%>
+	                                		<option><% out.print(t.get("accountname_ID")); %></option>
+	                                		<%
+										}
+	                               	}
+	                               	%>
+	               			</select>
+	                	</div>
+	                	<div class="form-group">
+	                    	<label for="select_supervisor_2" class="col-form-label">Betreuer 2:</label>
+	                        <select id="select_supervisor_2" class="custom-select form-control">
+	                        	<%
+	                           	for (HashMap<String, String> t : all_tutors)
+	                           	{
+	                           		%>
+	                          		<option><% out.print(t.get("accountname_ID")); %></option>
+	                          		<%
+	                           	}
+	                          	%>
+	                    	</select>
+	                	</div>
+	                	<div class="form-group">
+	                       	<label for="input_project_name" class="col-form-label">Projektname:</label>
+	                   	  	<input type="text" class="form-control" id="input_project_name">
+	               	    </div>
+	               	    <%
+						for(int i=0; i<team_max-1; i++){ 
+						%>
+						<div class="form-group">
+		                  	<label for="input_teammember<% out.print(i+1); %>_name" class="col-form-label">Teammitglied <% out.print(i+1); %> (Email-Adresse):</label>
+		                   	<input type="text" class="form-control" id="input_teammember<% out.print(i+1); %>_name">
+		       			</div>
+		                <%
+						}
+		                %>
+					</div>
+					
+	               	<!-- Button Abschicken -->
+	               	<div class="float-sm-right btn-toolbar mb-md-0 pt-3 pb-3">
+	                 	<button id="btn_submit" type="button" class="btn font-weight-bold text-light btn-lg btn-primary">Teamanfrage abschicken</button>
+	               	</div>
                 </div>
+                
                 <footer class="footer bg-white shadow align-self-end py-3 px-xl-5 w-100">
                     <div class="container-fluid">
                         <div class="row">
@@ -109,6 +167,32 @@
 					"click", klickLinkPersonalSettingsEvent);
 			function klickLinkPersonalSettingsEvent() {
 				window.open("/pep/home/view_personal_info", "_self");
+			}
+			document.querySelector('#btn_submit').addEventListener("click",
+				klickBtnSubmitEvent);
+			function klickBtnSubmitEvent() {
+				var z=0;
+				var data = {};
+				data['betreuer1'] = document.getElementById('select_supervisor_1').value;
+				data['betreuer2'] = document.getElementById('select_supervisor_2').value;
+				data['projekttitel'] = document.getElementById('input_project_name').value;
+				<%
+				for(int i=0; i<team_max -1; i++){ 
+				%>
+				data['teammitglied<% out.print(i+1); %>'] = document.getElementById('input_teammember<% out.print(i+1); %>_name').value;
+				if (input_teammember<% out.print(i+1); %>_name.value != ""){
+					z++;
+				}
+				<%
+				}
+                %>
+                if(z >= <% out.print(team_min); %>-1 && z <= <% out.print(team_max); %>-1){
+                	
+                }
+                else{
+                	window.alert("Die Anzahl der eingetragenen Teammitglieder ist zu niedrig. Ein Team muss mindestens aus " + <% out.print(team_min); %> + " Mitgliedern bestehen!");
+                }
+                
 			}
         </script>
     </body>

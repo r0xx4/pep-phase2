@@ -425,7 +425,7 @@
                     </div>
 
                     <!-- Button Ändern -->
-                    <div class="float-sm-right btn-toolbar mb-md-0 pt-3 pb-3 border-top">
+                    <div class="float-sm-right btn-toolbar mb-md-0 pt-3 pb-3">
                         <button id="btn_submit" type="button" class="btn font-weight-bold text-light btn-lg btn-primary">Änderungen speichern</button>
                     </div>
                 </div>
