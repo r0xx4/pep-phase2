@@ -264,7 +264,7 @@ public class Driver {
 		return list.isEmpty() ? null : list.get(0).get("phasename_ID");
 	}
 	
-	// checkForCurrendPhase
+	// Method checkForCurrendPhase
     public boolean checkForCurrentPhase(String phase) throws SQLException {
         LocalDate localDate = LocalDate.now();
         StringBuilder sql = new StringBuilder();

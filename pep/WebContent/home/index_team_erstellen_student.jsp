@@ -193,6 +193,7 @@
 			function klickBtnSubmitEvent() {
 				var z=0;
 				var data = {};
+				var team_max = <% out.print(team_max); %>;
 				<%
 				for(int i=0; i<team_max -1; i++){ 
 				%>
@@ -207,6 +208,14 @@
     				data['betreuer1'] = document.getElementById('select_supervisor_1').value;
     				data['betreuer2'] = document.getElementById('select_supervisor_2').value;
     				data['projekttitel'] = document.getElementById('input_project_name').value;
+    				
+    				var counter = 1;
+    				for(var i=0; i<team_max - 1; i++){
+    					if(document.getElementById('input_teammember' + (i+1) + '_name').value != ""){
+    						data['teammitglied' + counter] = document.getElementById('input_teammember' + (i+1) + '_name').value;
+    						counter++;
+    					}
+    				} 
                 	post("/pep/handle_db_write_team_request", data);
                 }
                 else{
