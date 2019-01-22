@@ -763,6 +763,18 @@
             var inputEndDateRegistrationPhase = document.getElementById("input_end_date_registration_phase");
             inputEndDateRegistrationPhase.value = "<% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "Registrierungsphase", "endDatum").get(0).get("endDatum"));%>"
             
+            var inputDeadlineDocumentation = document.getElementById("input_deadline_documentation");
+            inputDeadlineDocumentation.value = "<% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabeDokument", "endDatum").get(0).get("endDatum"));%>"
+            
+            var inputDeadlinePresentation = document.getElementById("input_deadline_presentation");
+            inputDeadlinePresentation.value = "<% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabePraesentation", "endDatum").get(0).get("endDatum"));%>"
+            
+            var inputDeadlinePoster = document.getElementById("input_deadline_poster");
+            inputDeadlinePoster.value = "<% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabePoster", "endDatum").get(0).get("endDatum"));%>"
+            
+            var inputDeadlineSummary = document.getElementById("input_deadline_summary");
+            inputDeadlineSummary.value = "<% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabeZusammenfassung", "endDatum").get(0).get("endDatum"));%>"
+            
             /*
             var startDateRegistrationPhase;
             var endDateRegistrationPhase;
@@ -1262,6 +1274,10 @@
 				push_to_db["Registrierung"] = document.getElementById("input_start_date_registration_phase").value
 												+ "#"
 												+ document.getElementById("input_end_date_registration_phase").value;
+				push_to_db["AbgabePoster"] = document.getElementById("input_deadline_poster").value;
+				push_to_db["AbgabePraesentation"] = document.getElementById("input_deadline_presentation").value;
+				push_to_db["AbgabeZusammenfassung"] = document.getElementById("input_deadline_summary").value;
+				push_to_db["AbgabeDokument"] = document.getElementById("input_deadline_documentation").value;
 				console.log(push_to_db);
 				post("/pep/handle_db_write_project_settings", push_to_db);
 			}

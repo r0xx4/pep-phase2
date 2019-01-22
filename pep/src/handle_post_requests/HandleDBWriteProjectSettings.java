@@ -76,6 +76,30 @@ public class HandleDBWriteProjectSettings extends HttpServlet {
 					registrierungsphasedaten.put("endDatum", registrierung_splitted[1]);
 					datenhaltung.updateTable("phase", "Registrierungsphase", registrierungsphasedaten);
 				}
+				else if(attribute.equals("AbgabePoster")) {
+					HashMap<String, String> abgabePosterDaten = new HashMap<String, String>();
+					String abgabePoster = push_into_db.get(attribute);
+					abgabePosterDaten.put("endDatum", abgabePoster);
+					datenhaltung.updateTable("phase", "AbgabePoster", abgabePosterDaten);
+				}
+				else if(attribute.equals("AbgabePraesentation")) {
+					HashMap<String, String> abgabePraesentationDaten = new HashMap<String, String>();
+					String abgabePraesentation = push_into_db.get(attribute);
+					abgabePraesentationDaten.put("endDatum", abgabePraesentation);
+					datenhaltung.updateTable("phase", "AbgabePraesentation", abgabePraesentationDaten);
+				}
+				else if(attribute.equals("AbgabeZusammenfassung")) {
+					HashMap<String, String> abgabeZusammenfassungDaten = new HashMap<String, String>();
+					String abgabeZusammenfassung = push_into_db.get(attribute);
+					abgabeZusammenfassungDaten.put("endDatum", abgabeZusammenfassung);
+					datenhaltung.updateTable("phase", "AbgabeZusammenfassung", abgabeZusammenfassungDaten);
+				}
+				else if(attribute.equals("AbgabeDokument")) {
+					HashMap<String, String> abgabeDokumentDaten = new HashMap<String, String>();
+					String abgabeDokument = push_into_db.get(attribute);
+					abgabeDokumentDaten.put("endDatum", abgabeDokument);
+					datenhaltung.updateTable("phase", "AbgabeDokument", abgabeDokumentDaten);
+				}
 				else if(attribute.equals("Studiengang_add")) {
 					if (!push_into_db.get(attribute).equals("")) {
 						String[] studiengaenge = push_into_db.get(attribute).split("%");
