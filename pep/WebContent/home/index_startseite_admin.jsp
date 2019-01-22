@@ -100,9 +100,14 @@
 					%>
 				</div>
 				<h5>Hallo <%out.print(html_contents.get("vorname"));%> <%out.print(html_contents.get("nachname"));%>,</h5>
-				Das Planungs und Entwicklunsprojekt beefindet sich momentan in
-				folgender Phase: <%out.print(datenhaltung.getCurrentPhase());%>
+				
 				<!-- Hier aktuelle Phase anzeigen -->
+				hier die <strong>Abgabefristen</strong> der Dokumente für die Studenten im Überblick:<br>
+				Dokumentation: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabeDokument", "endDatum").get(0).get("endDatum")); %></font><br>
+				Präsentation: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabePraesentation", "endDatum").get(0).get("endDatum")); %></font><br>
+				Poster: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabePoster", "endDatum").get(0).get("endDatum")); %></font><br>
+				Einseitige Zusammenfassung: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabeZusammenfassung", "endDatum").get(0).get("endDatum")); %></font><br>
+				
 				<div
 					class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3 border-bottom">
 					<h3 class="h3">

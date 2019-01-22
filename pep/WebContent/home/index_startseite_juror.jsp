@@ -101,9 +101,17 @@
 					%>
 				</div>
 				<h5>Hallo <%out.print(html_contents.get("vorname"));%> <%out.print(html_contents.get("nachname"));%>,</h5>
-				Das Planungs und Entwicklunsprojekt beefindet sich momentan in
-				folgender Phase: <%out.print(datenhaltung.getCurrentPhase());%>
+			
 				<!-- Hier aktuelle Phase anzeigen -->
+				<%
+				if(datenhaltung.checkForCurrentPhase("Projektbewertungsphase")){
+					%>Das Projekt befindet sich aktuell in der Prokjektbewertungsphase<%
+				}
+				else{
+					%>Das Projekt befindet sich aktuell nicht in der Projektbewertungsphase<%
+				}
+				%>
+				
 				<!-- Hier Custom HTML einfügen -->
 				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-5 pb-2 mb-3 border-bottom">
 					<h3 class="h3">

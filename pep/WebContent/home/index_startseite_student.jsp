@@ -77,8 +77,11 @@
                 
 				</div>
 				<h5>Hallo <%out.print(html_contents.get("vorname"));%> <%out.print(html_contents.get("nachname"));%>,</h5>
-				Das Planungs und Entwicklunsprojekt beefindet sich momentan in
-				folgender Phase: <%out.print(datenhaltung.getCurrentPhase());%>
+				hier alle wichtigen <strong>Abgabefristen</strong> im Überblick:<br>
+				Dokumentation: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabeDokument", "endDatum").get(0).get("endDatum")); %></font><br>
+				Präsentation: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabePraesentation", "endDatum").get(0).get("endDatum")); %></font><br>
+				Poster: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabePoster", "endDatum").get(0).get("endDatum")); %></font><br>
+				Einseitige Zusammenfassung: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabeZusammenfassung", "endDatum").get(0).get("endDatum")); %></font><br>
 				<div class="pt-3 pb-2">
                 <%
                 String currentPhase = datenhaltung.getCurrentPhase();
@@ -88,7 +91,7 @@
                 else if(currentPhase.equals("Registrierungsphase")){
                 	%>
                     <strong>Herlichen Glückwunsch! Sie haben es geschafft sich zu regestrieren!</strong><br>
-                    - Warten Sie auf die nächste Phase und somit auf neue Anweisungen, die Sie hier einsehen können<br>
+                    - Wenn Sie der Teamvorsitzende Ihres Teeames sind, dann erstellen Sie unter "Team erstellen" ein neues Team, drucken danach auf dieser Seite das Bestätigungs-Formular aus und lassen es von Ihren Teammitgliedern unterschreiben<br>
                     <%
                 }
                 else if(currentPhase.equals("Projektanmeldephase")){
@@ -108,13 +111,6 @@
         				<label class="pt-2">Laden Sie hier das Anmeldeformular für das Projekt herunter und lassen Sie es von allen Teammitgliedern unterschreiben: <a href="/pep/team_list_pdf?<% out.print(user); %>">Anmeldeformular</a></label></br>
                 		<%
                 	}
-                }
-                else if(currentPhase.equals("Projekterarbeitungsphase")){
-                	%>
-                	<strong>Ihre Aufgaben während der Projekterarbeitungs-Phase:</strong><br>
-        			- Unter <strong>"Projekt"</strong> sollten Sie den Speicher nutzen, um ihre Projektdateien hochzuladen<br>
-        			- <strong>Achtung!</strong> Die von Ihnnen zuletzt hochgeladene Datei wird Überschrieben!
-                	<%
                 }
                 else if(currentPhase.equals("Projektbewertungsphase")){
                 	%>

@@ -109,11 +109,12 @@
 						out.print(html_contents.get("nachname"));
 					%>,
 				</h5>
-				Das Planungs und Entwicklunsprojekt beefindet sich momentan in
-				folgender Phase:
-				<%
-						out.print(datenhaltung.getCurrentPhase());
-					%>
+				hier alle wichtigen <strong>Abgabefristen</strong> im Überblick:<br>
+				Dokumentation: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabeDokument", "endDatum").get(0).get("endDatum")); %></font><br>
+				Präsentation: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabePraesentation", "endDatum").get(0).get("endDatum")); %></font><br>
+				Poster: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabePoster", "endDatum").get(0).get("endDatum")); %></font><br>
+				Einseitige Zusammenfassung: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabeZusammenfassung", "endDatum").get(0).get("endDatum")); %></font><br>
+				
 				<!-- Hier aktuelle Phase anzeigen -->
 				<!-- Hier Custome HTML einfügen -->
 				
