@@ -763,19 +763,6 @@
             var inputEndDateRegistrationPhase = document.getElementById("input_end_date_registration_phase");
             inputEndDateRegistrationPhase.value = "<% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "Registrierungsphase", "endDatum").get(0).get("endDatum"));%>"
             
-            var inputStartDateProjectRegistrationPhase = document.getElementById("input_start_date_project_registration_phase");
-            inputStartDateProjectRegistrationPhase.value = "<% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "Projektanmeldephase", "startDatum").get(0).get("startDatum"));%>"
-            
-            var inputEndDateProjectRegistrationPhase = document.getElementById("input_end_date_project_registration_phase");
-            inputEndDateProjectRegistrationPhase.value = "<% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "Projektanmeldephase", "endDatum").get(0).get("endDatum"));%>"
-            
-            var inputStartDateProjectPhase = document.getElementById("input_start_date_project_phase");
-            inputStartDateProjectPhase.value = "<% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "Projekterarbeitungsphase", "startDatum").get(0).get("startDatum"));%>"
-            
-            var inputEndDateProjectPhase = document.getElementById("input_end_date_project_phase");
-            inputEndDateProjectPhase.value = "<% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "Projekterarbeitungsphase", "endDatum").get(0).get("endDatum"));%>"
-            
-            
             /*
             var startDateRegistrationPhase;
             var endDateRegistrationPhase;
@@ -1275,14 +1262,6 @@
 				push_to_db["Registrierung"] = document.getElementById("input_start_date_registration_phase").value
 												+ "#"
 												+ document.getElementById("input_end_date_registration_phase").value;
-				
-				push_to_db["Anmelden"] = document.getElementById("input_start_date_project_registration_phase").value
-										+ "#"
-										+ document.getElementById("input_end_date_project_registration_phase").value;
-				
-				push_to_db["Projektphase"] = document.getElementById("input_start_date_project_phase").value
-											+ "#"
-											+ document.getElementById("input_end_date_project_phase").value;
 				console.log(push_to_db);
 				post("/pep/handle_db_write_project_settings", push_to_db);
 			}
