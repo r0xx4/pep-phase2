@@ -263,6 +263,24 @@ public class Driver {
 		ArrayList<HashMap<String, String>> list = returnArrayList(sql.toString());
 		return list.isEmpty() ? null : list.get(0).get("phasename_ID");
 	}
+	
+	// checkForCurrendPhase
+    public boolean checkForCurrentPhase(String phase) throws SQLException {
+        LocalDate localDate = LocalDate.now();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT phasename_ID FROM phase Where startDatum <= '");
+        sql.append(localDate);
+        sql.append("'And endDatum > '");
+        sql.append(localDate);
+        sql.append("'");
+        ArrayList<HashMap<String, String>> list = returnArrayList(sql.toString());
+
+        for(HashMap h:list) {
+            if(h.get("phasename_ID").equals(phase))
+                return true;
+            }
+        return false;
+    }
 
 	// Method insertNewGroup
 	public boolean insertNewGroup(ArrayList<HashMap<String, String>> juroren) throws SQLException {
