@@ -68,31 +68,45 @@ public class HandleDBWriteTeamRequest extends HttpServlet {
 		HttpSession session = request.getSession();
 		String session_ID = (String)(session.getAttribute("session_id"));
 		
-		try 
+		if (session_ID != null)
 		{
-			String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
-			ArrayList<HashMap<String, String>> lehrstuhl_tut_1 = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", push_into_db.get("betreuer1"), "lehrstuhlname_ID");
-			if (!lehrstuhl_tut_1.isEmpty())
+			try 
 			{
-				ArrayList<String> teammitglieder = new ArrayList<String>();
-				for(int i=0; i<push_into_db.size() - 3; i++) {
-					teammitglieder.add(push_into_db.get("teammitglied" + (i+1)));
+				String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
+				String rolle = datenhaltung.getSubCat("account", accountname_ID).get(0).get("rollename_ID");
+				ArrayList<HashMap<String, String>> lehrstuhl_tut_1 = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", push_into_db.get("betreuer1"), "lehrstuhlname_ID");
+				ArrayList<HashMap<String, String>> team = datenhaltung.getSubCat("teammap", "accountname_ID", accountname_ID, "teamname_ID");
+				ArrayList<HashMap<String, String>> teamRequests = datenhaltung.getSubCat("tempteam", "antragsteller", accountname_ID);
+				
+				if (rolle.equals("Teilnehmer") || rolle.equals("Teamleiter"))
+				{
+					if(!team.isEmpty() || !teamRequests.isEmpty()) {
+						
+					}
+					else {
+						if (!lehrstuhl_tut_1.isEmpty())
+						{
+							ArrayList<String> teammitglieder = new ArrayList<String>();
+							for(int i=0; i<push_into_db.size() - 3; i++) {
+								teammitglieder.add(push_into_db.get("teammitglied" + (i+1)));
+							}
+							//String lehrstuhlname_ID = lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID");
+							//String org_einheit_lehrstuhl = datenhaltung.getSubCat("lehrstuhl", "lehrstuhlname_ID", lehrstuhlname_ID, "organisationseinheitname_ID").get(0).get("organisationseinheitname_ID");
+							datenhaltung.createTeamRequest(push_into_db.get("betreuer1") , push_into_db.get("betreuer2"), push_into_db.get("projekttitel"), accountname_ID, teammitglieder);
+							//String kennnummer = datenhaltung.createTeam(lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID"), push_into_db.get("projekttitel"), org_einheit_lehrstuhl, push_into_db.get("betreuer1"), push_into_db.get("betreuer2"));
+						}
+						else
+						{
+							out.println("window.alert(\"Bitte geben Sie einen Lehrstuhlinhaber als Betreuer 1 an!\");");
+						}
+					}
 				}
-				//String lehrstuhlname_ID = lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID");
-				//String org_einheit_lehrstuhl = datenhaltung.getSubCat("lehrstuhl", "lehrstuhlname_ID", lehrstuhlname_ID, "organisationseinheitname_ID").get(0).get("organisationseinheitname_ID");
-				datenhaltung.createTeamRequest(push_into_db.get("betreuer1") , push_into_db.get("betreuer2"), push_into_db.get("projekttitel"), accountname_ID, teammitglieder);
-				//String kennnummer = datenhaltung.createTeam(lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID"), push_into_db.get("projekttitel"), org_einheit_lehrstuhl, push_into_db.get("betreuer1"), push_into_db.get("betreuer2"));
-			}
-			else
+			} 
+			catch (SQLException e) 
 			{
-				out.println("window.alert(\"Bitte geben Sie einen Lehrstuhlinhaber als Betreuer 1 an!\");");
+				e.printStackTrace();
 			}
-		} 
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
 		}
-		
 		out.println("window.open(\"/pep/home/create_team\", \"_self\")");
 		out.println("</script>");
 		out.println("</body>");

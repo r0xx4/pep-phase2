@@ -45,12 +45,11 @@ public class ShowProject extends HttpServlet {
 				String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
 				String rolle = datenhaltung.getSubCat("account", accountname_ID).get(0).get("rollename_ID");
 				ArrayList<HashMap<String, String>> team = datenhaltung.getSubCat("teammap", "accountname_ID", accountname_ID, "teamname_ID");
-				String currentPhase = datenhaltung.getCurrentPhase();
 				System.out.println(rolle);
 				System.out.println(session_ID);
 				if (rolle.equals("Teilnehmer") || rolle.equals("Teamleiter"))
 				{
-					if(currentPhase == null || team.isEmpty()) {
+					if(team.isEmpty()) {
 						RequestDispatcher rd = request.getRequestDispatcher("/home/index_projektansicht_student_fehlermeldung.jsp");
 						rd.forward(request,  response);
 					}
