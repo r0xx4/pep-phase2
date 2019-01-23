@@ -56,6 +56,29 @@ public class Driver {
 
 		return kennnummer;
 	}
+	
+	//Method createTeamRequest
+	public boolean createTeamRequest(String betreuer1, String betreuer2, String projekttitel, String teamvorsitzender, 
+			ArrayList<String> teammitglieder)throws SQLException {
+		
+		LocalDate localDate = LocalDate.now();
+		String sql = "INSERT INTO `tempteam`( `datum`, `antragsteller`, `betreuer1`, `betreuer2`, `projekttitel`) VALUES ('"
+				+ localDate +"','"+ teamvorsitzender + "','" + betreuer1 + "','" + betreuer2 + "','" + projekttitel + "')";
+
+		if(!executeUpdate(sql))
+			return false;
+		System.out.println(getSubCat("tempteam", "antragsteller", teamvorsitzender, "tempteamname_ID").get(0));
+		String s=getSubCat("tempteam", "antragsteller", teamvorsitzender, "tempteamname_ID").get(0).get("tempteamname_ID");
+		System.out.println(s);
+		HashMap<String, String> h;
+		for(String str:teammitglieder) {
+			h = new HashMap();
+			h.put("accountname_ID", str);
+			h.put("tempteamname_ID", s);
+			insertHashMap("tempteammap", h);
+		}
+		return true;
+	}
 
 	// Method setTeamLeader
 	public boolean setTeamLeader(String mail) throws SQLException {

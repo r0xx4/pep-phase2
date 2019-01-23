@@ -197,7 +197,6 @@
 				<%
 				for(int i=0; i<team_max -1; i++){ 
 				%>
-				data['teammitglied<% out.print(i+1); %>'] = document.getElementById('input_teammember<% out.print(i+1); %>_name').value;
 				if (input_teammember<% out.print(i+1); %>_name.value != ""){
 					z++;
 				}

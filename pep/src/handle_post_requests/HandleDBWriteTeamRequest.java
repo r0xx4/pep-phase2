@@ -15,6 +15,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.itextpdf.text.log.SysoCounter;
 
 import data_management.Driver;
 
@@ -46,6 +49,7 @@ public class HandleDBWriteTeamRequest extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HashMap<String, String> push_into_db = new HashMap<>();
+		
 		for (String key : request.getParameterMap().keySet())
 		{
 			push_into_db.put(key, request.getParameterMap().get(key)[0]);
@@ -59,15 +63,24 @@ public class HandleDBWriteTeamRequest extends HttpServlet {
 		out.println("</head>");
 		out.println("<body>");
 		out.println("<script>");
+		
 		Driver datenhaltung = new Driver();
+		HttpSession session = request.getSession();
+		String session_ID = (String)(session.getAttribute("session_id"));
 		
 		try 
 		{
+			String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
 			ArrayList<HashMap<String, String>> lehrstuhl_tut_1 = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", push_into_db.get("betreuer1"), "lehrstuhlname_ID");
 			if (!lehrstuhl_tut_1.isEmpty())
 			{
-				String lehrstuhlname_ID = lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID");
-				String org_einheit_lehrstuhl = datenhaltung.getSubCat("lehrstuhl", "lehrstuhlname_ID", lehrstuhlname_ID, "organisationseinheitname_ID").get(0).get("organisationseinheitname_ID");
+				ArrayList<String> teammitglieder = new ArrayList<String>();
+				for(int i=0; i<push_into_db.size() - 3; i++) {
+					teammitglieder.add(push_into_db.get("teammitglied" + (i+1)));
+				}
+				//String lehrstuhlname_ID = lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID");
+				//String org_einheit_lehrstuhl = datenhaltung.getSubCat("lehrstuhl", "lehrstuhlname_ID", lehrstuhlname_ID, "organisationseinheitname_ID").get(0).get("organisationseinheitname_ID");
+				datenhaltung.createTeamRequest(push_into_db.get("betreuer1") , push_into_db.get("betreuer2"), push_into_db.get("projekttitel"), accountname_ID, teammitglieder);
 				//String kennnummer = datenhaltung.createTeam(lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID"), push_into_db.get("projekttitel"), org_einheit_lehrstuhl, push_into_db.get("betreuer1"), push_into_db.get("betreuer2"));
 			}
 			else
