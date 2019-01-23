@@ -56,8 +56,18 @@
                 <div class="container-fluid px-xl-5">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Accountansicht</h1>
+                        <div>
+                        	<label for="select_filter" class="col-form-label">Ansicht einschränken:</label>
+                        	<select id="select_filter" class="custom-select form-control">
+		                    	<option value = "none">Kein Filter</option>
+		                        <option value = "admin">Alle Admins</option>
+		                        <option value = "juror">Alle Juroren</option>
+		                        <option value = "tutor">Alle Tutoren</option>
+		                        <option value = "teilnehmer">Alle Projektteilnehmer</option>
+		                     </select>
+                        </div>
                         <div class="btn-toolbar mb-2 mb-md-0">
-                            <button id="btn_new_account" data-toggle="modal" data-target="#modal_new_account" class="btn btn-sm btn-outline-secondary">Neuer Account</button>
+                            <button id="btn_new_account" data-toggle="modal" data-target="#modal_new_account" class="btn btn-sm btn-outline-secondary">Neuer Account</button>       
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -79,7 +89,34 @@
                             <tbody>
                                 <% 	
 								Driver datenhaltung = new Driver();
-								ArrayList<HashMap<String, String>> html_contents = datenhaltung.getSubCat("account");
+                                String query = request.getQueryString();
+                                ArrayList<HashMap<String, String>> html_contents = new ArrayList<HashMap<String, String>>();
+                                if (query == null || query.split("=")[1].equals("none"))
+                                {
+    								html_contents = datenhaltung.getSubCat("account");
+                                }
+                                else
+                                {
+                                	String filter = query.split("=")[1];
+                                	System.out.println(filter);
+                                	if (filter.equals("admin"))
+                                	{
+        								html_contents = datenhaltung.getSubCat("account", "rollename_ID", "Admin");
+                                	}
+                                	else if (filter.equals("juror"))
+                                	{
+        								html_contents = datenhaltung.getSubCat("account", "rollename_ID", "Juror");
+                                	}
+                                    else if (filter.equals("tutor"))
+                                    {
+        								html_contents = datenhaltung.getSubCat("account", "rollename_ID", "Tutor");
+                                    }
+                                    else if (filter.equals("teilnehmer"))
+                                    {
+        								html_contents = datenhaltung.getSubCat("account", "rollename_ID", "Teilnehmer");
+                                		html_contents.addAll(datenhaltung.getSubCat("account", "rollename_ID", "Teamleiter"));
+                                    }
+                                }
 								ArrayList<String> teams = new ArrayList<>();
 								int counter = 0;
 								for (HashMap<String, String> row : html_contents)
@@ -308,6 +345,36 @@
 
         <script>
             //Hier Javascript Code
+            <% 
+        	if (query == null || query.split("=")[1].equals("none"))
+            {
+				out.print("document.querySelector('#select_filter').value = \"none\";");
+            }
+            else
+            {
+            	String filter = query.split("=")[1];
+            	if (filter.equals("admin"))
+            	{
+					out.print("document.querySelector('#select_filter').value = \"admin\";");
+
+            	}
+            	else if (filter.equals("juror"))
+            	{
+					out.print("document.querySelector('#select_filter').value = \"juror\";");
+
+            	}
+                else if (filter.equals("tutor"))
+                {
+					out.print("document.querySelector('#select_filter').value = \"tutor\";");
+
+                }
+                else if (filter.equals("teilnehmer"))
+                {
+					out.print("document.querySelector('#select_filter').value = \"teilnehmer\";");
+                }
+            }       
+		    %>
+            
             function post(path, params, method) {
                 method = method || "post";
                 var form = document.createElement("form");
@@ -452,9 +519,12 @@
             	del["type"] = "account";
             	del["id"] = document.querySelector('#input_email_editmode').value;
             	post("/pep/delete_entry", del);
-            	console.log("sent post");
 			}
             
+            document.querySelector('#select_filter').addEventListener("input", reloadPageWithFilter);
+            function reloadPageWithFilter(){
+            	window.open("/pep/home/show_accounts?filter=" + document.querySelector('#select_filter').value, "_self");
+            }
         </script>
         
         <!-- JavaScript files-->
