@@ -176,6 +176,25 @@ public class Driver {
 		else
 			return null;
 	}
+	
+	//Method activateAccount
+	public boolean activateAccount(int anonymeID) throws SQLException {
+        String s=String.valueOf(anonymeID);
+        String sql="SELECT anonyme_ID FROM account WHERE anonyme_ID LIKE ? ;";
+        HashMap <String,String> h=new HashMap<>();
+        h.put("anonyme_ID", s);
+        Set<String> k = h.keySet();
+        ArrayList<HashMap<String,String>> a=returnArrayList(sql, h, k);
+        if(a==null||a.isEmpty())
+            return false;
+        else if(a.get(0).get("anonyme_ID").equals(s)) {
+            sql="UPDATE account SET activated=1 WHERE anonyme_ID='"+s+"';";
+            executeUpdate(sql);
+            return true;
+        }
+        else
+            return false;
+    }
 
 	// Method logout
 	public boolean logout(int sessionID) throws SQLException {
