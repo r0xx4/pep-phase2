@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1" import="java.util.*, data_management.Driver, java.nio.file.Files,
-    java.nio.file.Path, java.nio.file.Paths, java.nio.file.attribute.BasicFileAttributes, java.text.SimpleDateFormat"%>
+    java.nio.file.Path, java.nio.file.Paths, java.nio.file.attribute.BasicFileAttributes, java.text.SimpleDateFormat, java.util.Date"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -90,19 +90,22 @@
                     		}
                     	}
                     }
+                    else{
+                    	out.print("<p>Noch keinem Team beigetreten.</p>");
+                    }
                    	%>
                     </div>
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-1 mb-3 border-bottom">
                         <h1 class="h4">Dateien</h1>
                     </div>
-                    <div>
                     <%
                 	SimpleDateFormat dt = new SimpleDateFormat("dd-MM-yyyy 'um' HH:mm");
                     String teamPath = "";
                     if(!teamname_ID.isEmpty()){
                     	teamPath = datenhaltung.getSubCat("team", "teamname_ID", teamname_ID.get(0).get("teamname_ID"), "projektpfad").get(0).get("projektpfad");
-                    }
+                    
                     %>
+                    <div>
                     	<label>Laden Sie Ihre Projektdateien vor Ablauf der Frist als PDF Datei hier hoch</label>
         	            <%
                         String defaultText = "PDF Datei hochladen";
@@ -123,9 +126,19 @@
                             <div class="col-sm-9">
                                 <div class="custom-file">
                                 	<form method = "post" action = "/pep/file_upload" enctype=multipart/form-data>
-                                		<input type="file" class="custom-file-input" name="Bericht" accept=".pdf" onchange="onFileSelected(this)">     
+                                		<input type="file" class="custom-file-input" name="Bericht" accept=".pdf" onchange="onFileSelected(this)" <%out.print(!datenhaltung.checkForCurrentPhase("AbgabeDokument") ? ("style='cursor: not-allowed;' "  + "disabled") : ""); %>>     
                                     </form>
-                                    <label class="custom-file-label" for="customFile"><%out.print(Files.exists(pathBericht) ? uploadBericht : defaultText); %></label>   
+                                    <%
+                                    if(Files.exists(pathBericht)){
+                                    	out.print("<label class='custom-file-label' for='customFile'>" + uploadBericht + "</label>");
+                                    }
+                                    else if(!datenhaltung.checkForCurrentPhase("AbgabeDokument")){
+                                    	out.print("<label class='custom-file-label' for='customFile'>Abgabefrist abgelaufen</label>");
+                                    }
+                                    else{
+                                    	out.print("<label class='custom-file-label' for='customFile'>" + defaultText + "</label>");
+                                    }
+                                    %>
                                 </div>
                             </div>
                         </div>
@@ -147,9 +160,19 @@
                             <div class="col-sm-9">
                                 <div class="custom-file">
                                 	<form method = "post" action = "/pep/file_upload" enctype=multipart/form-data>
-                                		<input type="file" class="custom-file-input" name="Praesentation" accept=".pdf" onchange="onFileSelected(this)">     
+                                		<input type="file" class="custom-file-input" name="Praesentation" accept=".pdf" onchange="onFileSelected(this)" <%out.print(!datenhaltung.checkForCurrentPhase("AbgabePraesentation") ? ("style='cursor: not-allowed'; "  + "disabled") : ""); %>>     
                                     </form>
-                                    <label class="custom-file-label" for="customFile"><%out.print(Files.exists(pathPraesentation) ? uploadPraesentation : defaultText); %></label>
+                                    <%
+                                    if(Files.exists(pathPraesentation)){
+                                    	out.print("<label class='custom-file-label' for='customFile'>" + uploadPraesentation + "</label>");
+                                    }
+                                    else if(!datenhaltung.checkForCurrentPhase("AbgabePraesentation")){
+                                    	out.print("<label class='custom-file-label' for='customFile'>Abgabefrist abgelaufen</label>");
+                                    }
+                                    else{
+                                    	out.print("<label class='custom-file-label' for='customFile'>" + defaultText + "</label>");
+                                    }
+                                    %>
                                 </div>
                             </div>
                         </div>
@@ -171,9 +194,19 @@
                             <div class="col-sm-9">
                                 <div class="custom-file">
                                 	<form method = "post" action = "/pep/file_upload" enctype=multipart/form-data>
-                                		<input type="file" class="custom-file-input" name="Poster" accept=".pdf" onchange="onFileSelected(this)">     
+                                		<input type="file" class="custom-file-input" name="Poster" accept=".pdf" onchange="onFileSelected(this)" <%out.print(!datenhaltung.checkForCurrentPhase("AbgabePoster") ? ("style='cursor: not-allowed'; "  + "disabled") : ""); %>>     
                                     </form> 
-                                    <label class="custom-file-label" for="customFile"><%out.print(Files.exists(pathPoster) ? uploadPoster : defaultText); %></label>
+                                    <%
+                                    if(Files.exists(pathPoster)){
+                                    	out.print("<label class='custom-file-label' for='customFile'>" + uploadPoster + "</label>");
+                                    }
+                                    else if(!datenhaltung.checkForCurrentPhase("AbgabePoster")){
+                                    	out.print("<label class='custom-file-label' for='customFile'>Abgabefrist abgelaufen</label>");
+                                    }
+                                    else{
+                                    	out.print("<label class='custom-file-label' for='customFile'>" + defaultText + "</label>");
+                                    }
+                                    %>
                                 </div>
                             </div>
                         </div>
@@ -195,9 +228,19 @@
 	                        <div class="col-sm-9">
 	                            <div class="custom-file">
 	                            	<form method = "post" action = "/pep/file_upload" enctype=multipart/form-data>
-                                		<input type="file" class="custom-file-input" name="Zusammenfassung" accept=".pdf" onchange="onFileSelected(this)">     
+                                		<input type="file" class="custom-file-input" name="Zusammenfassung" accept=".pdf" onchange="onFileSelected(this)" <%out.print(!datenhaltung.checkForCurrentPhase("AbgabeZusammenfassung") ? ("style='cursor: not-allowed'; "  + "disabled") : ""); %>>     
                                     </form>
-	                                <label class="custom-file-label" for="customFile"><%out.print(Files.exists(pathZusammenfassung) ? uploadZusammenfassung : defaultText); %></label>
+                                    <%
+                                    if(Files.exists(pathZusammenfassung)){
+                                    	out.print("<label class='custom-file-label' for='customFile'>" + uploadZusammenfassung + "</label>");
+                                    }
+                                    else if(!datenhaltung.checkForCurrentPhase("AbgabeZusammenfassung")){
+                                    	out.print("<label class='custom-file-label' for='customFile'>Abgabefrist abgelaufen</label>");
+                                    }
+                                    else{
+                                    	out.print("<label class='custom-file-label' for='customFile'>" + defaultText + "</label>");
+                                    }
+                                    %>
 	                            </div>
 	                        </div>
 	                    </div>
@@ -206,6 +249,10 @@
                     <div class="float-sm-right btn-toolbar mb-md-0 pt-3 pb-3">
                         <button id="btn_submit" type="button" class="btn font-weight-bold text-light btn-lg btn-primary">Änderungen speichern</button>
                     </div>
+                 	<%
+                    }
+                    else out.print("<p>Noch keinem Team beigetreten.</p>");
+                	%>
                 </div>
                 <footer class="footer bg-white shadow align-self-end py-3 px-xl-5 w-100">
                     <div class="container-fluid">
