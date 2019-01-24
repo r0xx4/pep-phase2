@@ -45,27 +45,14 @@ public class ShowProject extends HttpServlet {
 				String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
 				String rolle = datenhaltung.getSubCat("account", accountname_ID).get(0).get("rollename_ID");
 				ArrayList<HashMap<String, String>> team = datenhaltung.getSubCat("teammap", "accountname_ID", accountname_ID, "teamname_ID");
-<<<<<<< HEAD
 				//String currentPhase = datenhaltung.getCurrentPhase();
-=======
->>>>>>> branch 'master' of https://github.com/r0xx4/pep-phase2.git
 				System.out.println(rolle);
 				System.out.println(session_ID);
 				if (rolle.equals("Teilnehmer") || rolle.equals("Teamleiter"))
 				{
-<<<<<<< HEAD
 					RequestDispatcher rd = request.getRequestDispatcher("/home/index_projektansicht_student.jsp");
 					rd.forward(request,  response);
-=======
-					if(team.isEmpty()) {
-						RequestDispatcher rd = request.getRequestDispatcher("/home/index_projektansicht_student_fehlermeldung.jsp");
-						rd.forward(request,  response);
-					}
-					else {
-						RequestDispatcher rd = request.getRequestDispatcher("/home/index_projektansicht_student.jsp");
-						rd.forward(request,  response);
-					}
->>>>>>> branch 'master' of https://github.com/r0xx4/pep-phase2.git
+
 				}
 				else
 				{
