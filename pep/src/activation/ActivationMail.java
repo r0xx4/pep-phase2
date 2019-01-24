@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -55,7 +56,7 @@ public class ActivationMail extends HttpServlet {
 		String pworg=user.get(0).get("bestaetigungspasswort");
 		if(pw.equals(pworg))
 		{
-			datenhaltung.activate(id);
+			//datenhaltung.activate(id);
 			PrintWriter out = response.getWriter();
 			out.println("<!DOCTYPE html>");
 			out.println("<html>");
@@ -85,7 +86,7 @@ public class ActivationMail extends HttpServlet {
 			out.close();
 		}
 		}
-		catch (exception e)
+		catch (Exception e)
 		{
 			PrintWriter out = response.getWriter();
 			out.println("<!DOCTYPE html>");

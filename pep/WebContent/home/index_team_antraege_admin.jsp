@@ -63,9 +63,10 @@
                                     <th scope="col">Datum</th>
                                     <th scope="col">Antragsteller</th>
                                     <th scope="col">Studenten</th>
+                                    <th scope="col">Betreuer1</th>
+                                    <th scope="col">Betreuer2</th>
                                     <th scope="col">Gruppe</th>
                                     <th scope="col">Projekt</th>
-                                    <th scope="col"></th>
                                     <th scope="col"></th>
                                     <th scope="col"></th>
                                 </tr>
@@ -73,39 +74,38 @@
                             <tbody>
                             	<% 	
                            		Driver datenhaltung = new Driver();
-                           		ArrayList<HashMap<String, String>> html_contents = datenhaltung.getSubCat("team");
+                           		ArrayList<HashMap<String, String>> html_contents = datenhaltung.getSubCat("tempteam");
                            		ArrayList<HashMap<String, String>> tutors = new ArrayList<>();
                            		for (HashMap<String, String> row : html_contents)
                            		{
                            			tutors.add(new HashMap<String, String>());
                            		%>
 	                           		<tr>
-	                                    <th><% out.print("23.01.2019"); %></th>
-	                                    <td><% out.print("karl@teilnehmer.de"); %></td>
+	                                    <th><% out.print(row.get("datum")); %></th>
+	                                    <td><% out.print(row.get("antragsteller")); %></td>
 	                                    <% 
 	                                    int counter = 0;
-	                                    /* ArrayList<HashMap<String, String>> accountsInTeam = datenhaltung.getSubCat("teammap", "teamname_ID", row.get("teamname_ID"), "accountname_ID");
-	                                    for(HashMap<String, String> account : accountsInTeam){
-	                                    	if(!datenhaltung.getSubCat("account", "accountname_ID", account.get("accountname_ID"), "rollename_ID").get(0).get("rollename_ID").equals("Tutor")){
-	                                    		counter++;
-	                                    	}
-	
-	                                    } */
+	                                    ArrayList<HashMap<String, String>> accountsInTempteam = datenhaltung.getSubCat("tempteammap", "tempteamname_ID", row.get("tempteamname_ID"), "accountname_ID");
+	                                    for(HashMap<String, String> account : accountsInTempteam){
+                                    		counter++;
+	                                    }
 	                                   
 	                                    %>
-	                                    <td> <% out.print(counter); %></td>
+	                                    <td><% out.print(counter+1); %></td>
 	                                    <%
-	                        			/* ArrayList<HashMap<String, String>> lehrstuhl_tut_1 = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", tutors.get(tutors.size()-1).get("tutor1"), "lehrstuhlname_ID");
+	                                    String tutor_1 = row.get("betreuer1");
+	                                    %> <td><% out.print(tutor_1); %></td> <%
+	                                    String tutor_2 = row.get("betreuer2");
+	                                    %> <td><% out.print(tutor_2); %></td> <%
+	                        			ArrayList<HashMap<String, String>> lehrstuhl_tut_1 = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", tutor_1);
 	                                    String lehrstuhlname_ID = lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID");
-	                    				String org_einheit_lehrstuhl = datenhaltung.getSubCat("lehrstuhl", "lehrstuhlname_ID", lehrstuhlname_ID, "organisationseinheitname_ID").get(0).get("organisationseinheitname_ID");
-	                                     */
+	                    				String org_einheit_lehrstuhl = lehrstuhl_tut_1.get(0).get("organisationseinheitname_ID");
+	                                     
 	                                     %>
-	                                    <td><% /* out.print(org_einheit_lehrstuhl); */ %></td>
+	                                    <td><% out.print(org_einheit_lehrstuhl); %></td>
 	                                    <td><% out.print(row.get("projekttitel")); %></td>
-	                                    
-	                                    <td><a href="/pep/home/show_accounts"><i class="far fa-trash-alt" style="color:red"></i></a></td>
-	                                    <td><a href="/pep/home/show_accounts"><i class="fas fa-info-circle" style="color:blue"></i></a></td>
-                                    	<td><button id="btn_confirm_team_<% out.print(tutors.size()); %>" class="btn btn-sm btn-primary text-center col-sm">Team Bestätigen</button></td>
+	                                    <td><button id="btn_tempteam_more_<% out.print(tutors.size()); %>" data-toggle="modal" data-target="#modal_more" class="btn btn-sm btn-info text-center col-sm">Mehr</button></td>
+                                    	<td><button id="btn_confirm_tempteam_<% out.print(tutors.size()); %>" class="btn btn-sm btn-primary text-center col-sm">Team Bestätigen</button></td>
 	                                </tr>
                            			<%
                            		}
@@ -123,6 +123,82 @@
                         </div>
                     </div>
                 </footer>
+            </div>
+        </div>
+
+		 <!-- Modal Team mehr -->
+        <div class="modal fade" id="modal_more" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Team Info</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Anfrage-Datum:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_date">-</label>
+                                </div>    
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Antragsteller:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_team_chairman">-</label>
+                                </div>   
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Betreuer 1:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_supervisor_1">-</label>
+                                </div>   
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Betreuer 2:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_supervisor_2">-</label>
+                                </div>   
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Gruppe:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_group">-</label>
+                                </div>   
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Projekt:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_project">-</label>
+                                </div>   
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-form-label col-sm-4"><strong>Teammitglieder:</strong></label>
+                                <div class="col-sm-8">                   
+                                    <label class="col-form-label" id="lbl_team_member">-</label></br>
+                                </div>   
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                    	<button id="btn_delete_groupe" type="button" class="btn btn-danger">Löschen</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                    </div>
+                </div>
             </div>
         </div>
 
