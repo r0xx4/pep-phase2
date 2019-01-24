@@ -260,14 +260,17 @@
             
             var current_html_content;
             
-            document.querySelector('#btn_delete_groupe').addEventListener("click", deleteAccount);
-            function deleteAccount(){
-            	var del = {};
-            	del["type"] = "team";
-            	del["id"] = document.querySelector('#input_team_name_editmode').value;
-            	post("/pep/delete_entry", del);
-			}
-            
+            <%
+            for (int x = 0; x < html_contents.size(); x++){
+             	%>
+            	document.querySelector('#btn_confirm_tempteam_<% out.print(x+1); %>').addEventListener("click", function(){
+            		current_html_content = "<% out.print(html_contents.get(x).get("tempteamname_ID")); %>";
+            		data['tempteamname_ID'] = current_html_content;
+            		post("/pep/handle_db_write_confirm_teams", data);
+            	})
+            <%
+           	}
+            %>
         </script>
         
         <!-- JavaScript files-->

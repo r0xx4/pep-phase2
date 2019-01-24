@@ -303,10 +303,16 @@
 	        function klickLinkPersonalSettingsEvent(){
 	        	window.open("/pep/home/view_personal_info", "_self");
 	        }
+	        <%
+            if(teamname_ID.isEmpty() && teamRequests.isEmpty()){
+            	%>
 	        document.querySelector('#link_create_team').addEventListener("click", klickLinkCreateTeam); 
 	        function klickLinkCreateTeam(){
 	        	window.open("/pep/home/create_team", "_self");
 	        }
+	        <% 
+            }
+	        %>
 			document.querySelector('#link_show_project').addEventListener("click",
 					klickLinkShowProjectEvent);
 			function klickLinkShowProjectEvent() {
