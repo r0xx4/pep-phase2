@@ -292,11 +292,11 @@
 						
 						System.out.println(accounts_in_tempteam);
 						if(!teammitglid.isEmpty() && teammitglid.get(0).get("rollename_ID").equals("Teilnehmer") && teammap_hits.isEmpty()){
-							teammitglieder = teammitglieder + "<i class=\\\"far fa-check-circle fa-1x\\\" style=\\\"color:green\\\"></i>";
+							teammitglieder = teammitglieder + " <i class=\\\"far fa-check-circle fa-1x\\\" style=\\\"color:green\\\"></i>";
 							teammitglieder = teammitglieder + "</br>";
 						}
 						else{
-							teammitglieder = teammitglieder + "<i class=\\\"far fa-circle\\\" style=\\\"color:red\\\"></i>";
+							teammitglieder = teammitglieder + " <i class=\\\"far fa-times-circle\\\" style=\\\"color:red\\\"></i>";
 							teammitglieder = teammitglieder + "</br>";
 						}
 	                }
