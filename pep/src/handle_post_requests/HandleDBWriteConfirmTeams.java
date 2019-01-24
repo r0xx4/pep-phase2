@@ -1,7 +1,13 @@
 package handle_post_requests;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -52,6 +58,30 @@ public class HandleDBWriteConfirmTeams extends HttpServlet {
 		out.println("<body>");
 		out.println("<script>");
 		Driver datenhaltung = new Driver();
+		
+		
+		try {
+			ArrayList<HashMap<String, String>> teamData = datenhaltung.getSubCat("tempteam", "tempteamname_ID", push_into_db.get("tempteamname_ID"));
+			String lehrstuhlname_ID = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", teamData.get(0).get("betreuer1"), "lehrstuhlname_ID").get(0).get("lehrstuhlname_ID");
+			String org_einheit_lehrstuhl = datenhaltung.getSubCat("lehrstuhl", "lehrstuhlname_ID", lehrstuhlname_ID, "organisationseinheitname_ID").get(0).get("organisationseinheitname_ID");
+			String kennnummer = datenhaltung.createTeam(lehrstuhlname_ID, teamData.get(0).get("projekttitel"), org_einheit_lehrstuhl, teamData.get(0).get("betreuer1"), teamData.get(0).get("betreuer2"));
+			
+			
+		
+			Path path = Paths.get("C:/data" + kennnummer);
+			if (!Files.exists(path))
+			{
+				new File("C:/data/" + kennnummer).mkdirs();
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		out.println("window.open(\"/pep/home/show_teams\", \"_self\")");
+		out.println("</script>");
+		out.println("</body>");
+		out.close();
 	}
 
 }
