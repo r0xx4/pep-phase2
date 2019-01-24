@@ -72,6 +72,7 @@
                                     <th scope="col">Projekt</th>
                                     <th scope="col"></th>
                                     <th scope="col"></th>
+                                    <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -137,7 +138,8 @@
 	                                    %>
 	                                    <td><% out.print(org_einheit_lehrstuhl); %></td>
 	                                    <td><% out.print(row.get("projekttitel")); %></td>
-	                                    <td><button id="btn_valuation_<% out.print(tutors.size()); %>" data-toggle="modal" data-target="#modal_valuation" class="btn btn-sm btn-outline-info text-center col-sm">Bewertung</button></td>
+	                                    <td><button id="btn_team_<% out.print(tutors.size()); %>" data-toggle="modal" data-target="#modal_team" class="btn btn-sm btn-outline-info text-center col-sm">Mehr</button></td>
+	                                    <td><button id="btn_valuation_<% out.print(tutors.size()); %>" data-toggle="modal" data-target="#modal_valuation" class="btn btn-sm btn-outline-primary text-center col-sm">Bewertung</button></td>
                                     	<td><button id="btn_edit_team_<% out.print(tutors.size()); %>" data-toggle="modal" data-target="#modal_edit_team" class="btn btn-sm btn-outline-secondary text-center col-sm">Bearbeiten</button></td>
 	                                </tr>
                            			<%
@@ -276,6 +278,98 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
                         <button id = "btn_save" type="button" class="btn btn-primary">Hinzufügen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal Team Mehr -->
+        <div class="modal fade" id="modal_team" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Team Informationen</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Name:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_team_name">-</label>
+                                </div>    
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Kennnummer:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_team_id">-</label>
+                                </div>   
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Gruppe:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_group">-</label>
+                                </div>   
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Betreuer 1:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_supervisor_1">-</label>
+                                </div>   
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Betreuer 2:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_supervisor_2">-</label>
+                                </div>   
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Projekt:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_project">-</label>
+                                </div>   
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4">
+                                    <label class="col-form-label"><strong>Teamvorsitzender:</strong></label>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="col-form-label" id="lbl_team_chairman">-</label>
+                                </div>   
+                            </div>                           
+                            <div class="form-group row">
+                                <label class="col-form-label col-sm-4"><strong>Teammitglieder:</strong></label>
+                                <div class="col-sm-8">                   
+                                    <label class="col-form-label" id="lbl_team_member">-</label></br>
+                                </div>   
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-form-label col-sm-4"><strong>Dokumente:</strong></label>
+                                <div class="col-sm-8">
+                                    <label><a id="link_download_documentation" href="#">Bericht/Dokumentation</a></label></br>
+                                    <label><a id="link_download_presentation" href="#">Projekt Präsentation</a></label><br>
+                                    <label><a id="link_download_poster" href="#">Poster</a></label><br>
+                                    <label><a id="link_download_summary" href="#">Einseitige Zusammenfassung</a></label><br>                                  
+                                </div>   
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
                     </div>
                 </div>
             </div>
@@ -490,6 +584,77 @@
             	<%	
             }
             %>
+            
+            <%
+			for (int x = 0; x < html_contents.size(); x++){
+				%>
+				document.querySelector('#btn_team_<% out.print(x+1); %>').addEventListener("click", function(){
+					document.querySelector('#lbl_team_name').innerHTML = "<% out.print("Team " + html_contents.get(x).get("teamnummer")); %>";
+	                document.querySelector('#lbl_team_id').innerHTML = "<% out.print(html_contents.get(x).get("teamname_ID")); %>";
+	                document.querySelector('#lbl_group').innerHTML = "<% out.print(html_contents.get(x).get("organisationseinheitname_ID")); %>";
+	                <%
+	                ArrayList<HashMap<String, String>> accounts_in_team = datenhaltung.getSubCat("teammap", "teamname_ID", html_contents.get(x).get("teamname_ID"), "accountname_ID");
+                    String tutor_1 = null;
+                    for (HashMap<String, String> account : accounts_in_team)
+                    {
+                    	if (datenhaltung.getSubCat("account", "accountname_ID", account.get("accountname_ID"), "rollename_ID").get(0).get("rollename_ID").equals("Tutor"))
+                    	{
+                    		tutor_1 = account.get("accountname_ID");
+                    		tutors.get(tutors.size()-1).put("tutor1", tutor_1);
+                    		break;
+                    	}
+                    }
+	                %>
+	                document.querySelector('#lbl_supervisor_1').innerHTML = "<% out.print(tutor_1); %>";
+	                <%
+	                String tutor_2 = null;
+                    boolean appeared = false;
+                    for (HashMap<String, String> account : accounts_in_team)
+                    {
+                    	if (datenhaltung.getSubCat("account", "accountname_ID", account.get("accountname_ID"), "rollename_ID").get(0).get("rollename_ID").equals("Tutor"))
+                    	{
+                    		if (appeared)
+                    		{
+                    			tutor_2 = account.get("accountname_ID");
+                    			tutors.get(tutors.size()-1).put("tutor2", tutor_2);
+                        		break;
+                    		}
+                    		appeared = true;
+                    	}
+                    }
+	                %>
+	                document.querySelector('#lbl_supervisor_2').innerHTML = "<% out.print(tutor_2); %>";
+	                document.querySelector('#lbl_project').innerHTML = "<% out.print(html_contents.get(x).get("projekttitel")); %>";
+	                <%
+	            	String teamleiter = "-";
+	                for(int i=0; i<accounts_in_team.size(); i++){
+	                	if(datenhaltung.getSubCat("account", "accountname_ID", accounts_in_team.get(i).get("accountname_ID"), "rollename_ID").get(0).get("rollename_ID").equals("Teamleiter" + "")){
+							teamleiter = datenhaltung.getSubCat("account", "accountname_ID", accounts_in_team.get(i).get("accountname_ID"), "vorname").get(0).get("vorname") + " " + datenhaltung.getSubCat("account", "accountname_ID", accounts_in_team.get(i).get("accountname_ID"), "nachname").get(0).get("nachname");
+						}
+	                }
+	                %>
+	                document.querySelector('#lbl_team_chairman').innerHTML = "<% out.print(teamleiter); %>";
+	                <%
+	                String teammitglieder = "";
+	                for(int i=0; i<accounts_in_team.size(); i++){
+	                	if(datenhaltung.getSubCat("account", "accountname_ID", accounts_in_team.get(i).get("accountname_ID"), "rollename_ID").get(0).get("rollename_ID").equals("Teilnehmer" + "")){
+							teammitglieder = teammitglieder + datenhaltung.getSubCat("account", "accountname_ID", accounts_in_team.get(i).get("accountname_ID"), "vorname").get(0).get("vorname") + " " + datenhaltung.getSubCat("account", "accountname_ID", accounts_in_team.get(i).get("accountname_ID"), "nachname").get(0).get("nachname") + "</br>";
+						}
+	                }
+	                if(teammitglieder.equals("")){
+	                	teammitglieder = "-";
+	                }
+	                %>
+	                document.querySelector('#lbl_team_member').innerHTML = "<% out.print(teammitglieder); %>";
+	                document.querySelector('#link_download_documentation').href="/pep/provide_project_file_download?filetype=documentation&team=<% out.print(html_contents.get(x).get("teamname_ID")); %>";
+	                document.querySelector('#link_download_presentation').href="/pep/provide_project_file_download?filetype=presentation&team=<% out.print(html_contents.get(x).get("teamname_ID")); %>";
+	                document.querySelector('#link_download_poster').href="/pep/provide_project_file_download?filetype=poster&team=<% out.print(html_contents.get(x).get("teamname_ID")); %>";
+	                document.querySelector('#link_download_summary').href="/pep/provide_project_file_download?filetype=summary&team=<% out.print(html_contents.get(x).get("teamname_ID")); %>";
+				})
+	            
+				<%
+       		}
+			%>
             
             document.querySelector('#btn_save').addEventListener("click", sendPostToDb_edit);
             function sendPostToDb_edit(){
