@@ -62,7 +62,9 @@ public class TransferAccountData extends HttpServlet {
 			if (account_data.get("rollename_ID").equals("Teilnehmer") || account_data.get("masterkey").equals(datenhaltung.getMasterPassword(account_data.get("rollename_ID"))))
 			{
 				account_data.remove("masterkey");
+				account_data.put("bestaetigungspasswort",(Math.random()*10000)*Math.random());
 				datenhaltung.insertHashMap("account", account_data);
+				SendMail.sendGMX(account_data.get("accountname_ID"));
 				PrintWriter out = response.getWriter();
 				out.println("<!DOCTYPE html>");
 				out.println("<html>");

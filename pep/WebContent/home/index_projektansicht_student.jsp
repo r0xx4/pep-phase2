@@ -31,6 +31,7 @@
         String session_ID = (String)(session.getAttribute("session_id"));
         String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
         ArrayList<HashMap<String, String>> teamname_ID = datenhaltung.getSubCat("teammap", "accountname_ID", accountname_ID, "teamname_ID");
+        ArrayList<HashMap<String, String>> teamRequests = datenhaltung.getSubCat("tempteam", "antragsteller", accountname_ID);
     	%>
     
         <!-- navbar-->
@@ -49,7 +50,7 @@
                 <ul class="sidebar-menu list-unstyled">
                     <li id="link_home" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-home-1 mr-3 text-gray"></i><span>Home</span></a></li>
                     <%
-                    if(teamname_ID.isEmpty()){
+                    if(teamname_ID.isEmpty() && teamRequests.isEmpty()){
                     	%>
                     	 <li id="link_create_team" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-earth-globe-1 mr-3 text-gray"></i><span>Team erstellen</span></a></li>
                     	<%
