@@ -259,6 +259,7 @@
             }
             
             var current_html_content;
+			var data = {};
             
             <%
             for (int x = 0; x < html_contents.size(); x++){
