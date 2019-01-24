@@ -131,7 +131,12 @@
                                     </form>
                                     <%
                                     if(Files.exists(pathBericht)){
-                                    	out.print("<label class='custom-file-label' for='customFile'>" + uploadBericht + "</label>");
+                                    	if(!datenhaltung.checkForCurrentPhase("AbgabeDokument")){
+                                        	out.print("<label class='custom-file-label' for='customFile'>" + uploadBericht + " - Abgabefrist abgelaufen</label>");
+                                        }
+                                    	else{
+                                    		out.print("<label class='custom-file-label' for='customFile'>" + uploadBericht + "</label>");
+                                    	}
                                     }
                                     else if(!datenhaltung.checkForCurrentPhase("AbgabeDokument")){
                                     	out.print("<label class='custom-file-label' for='customFile'>Abgabefrist abgelaufen</label>");
@@ -165,7 +170,12 @@
                                     </form>
                                     <%
                                     if(Files.exists(pathPraesentation)){
-                                    	out.print("<label class='custom-file-label' for='customFile'>" + uploadPraesentation + "</label>");
+                                    	if(!datenhaltung.checkForCurrentPhase("AbgabePraesentation")){
+                                        	out.print("<label class='custom-file-label' for='customFile'>" + uploadPraesentation + " - Abgabefrist abgelaufen</label>");
+                                        }
+                                    	else{
+                                    		out.print("<label class='custom-file-label' for='customFile'>" + uploadPraesentation + "</label>");
+                                    	}
                                     }
                                     else if(!datenhaltung.checkForCurrentPhase("AbgabePraesentation")){
                                     	out.print("<label class='custom-file-label' for='customFile'>Abgabefrist abgelaufen</label>");
@@ -199,7 +209,12 @@
                                     </form> 
                                     <%
                                     if(Files.exists(pathPoster)){
-                                    	out.print("<label class='custom-file-label' for='customFile'>" + uploadPoster + "</label>");
+                                    	if(!datenhaltung.checkForCurrentPhase("AbgabePoster")){
+                                        	out.print("<label class='custom-file-label' for='customFile'>" + uploadPoster + " - Abgabefrist abgelaufen</label>");
+                                        }
+                                    	else{
+                                    		out.print("<label class='custom-file-label' for='customFile'>" + uploadPoster + "</label>");
+                                    	}
                                     }
                                     else if(!datenhaltung.checkForCurrentPhase("AbgabePoster")){
                                     	out.print("<label class='custom-file-label' for='customFile'>Abgabefrist abgelaufen</label>");
@@ -233,7 +248,12 @@
                                     </form>
                                     <%
                                     if(Files.exists(pathZusammenfassung)){
-                                    	out.print("<label class='custom-file-label' for='customFile'>" + uploadZusammenfassung + "</label>");
+                                    	if(!datenhaltung.checkForCurrentPhase("AbgabeZusammenfassung")){
+                                        	out.print("<label class='custom-file-label' for='customFile'>" + uploadZusammenfassung + " - Abgabefrist abgelaufen</label>");
+                                        }
+                                    	else{
+                                    		out.print("<label class='custom-file-label' for='customFile'>" + uploadZusammenfassung + "</label>");
+                                    	}
                                     }
                                     else if(!datenhaltung.checkForCurrentPhase("AbgabeZusammenfassung")){
                                     	out.print("<label class='custom-file-label' for='customFile'>Abgabefrist abgelaufen</label>");
