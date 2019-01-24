@@ -65,9 +65,36 @@ public class HandleDBWriteConfirmTeams extends HttpServlet {
 			String lehrstuhlname_ID = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", teamData.get(0).get("betreuer1"), "lehrstuhlname_ID").get(0).get("lehrstuhlname_ID");
 			String org_einheit_lehrstuhl = datenhaltung.getSubCat("lehrstuhl", "lehrstuhlname_ID", lehrstuhlname_ID, "organisationseinheitname_ID").get(0).get("organisationseinheitname_ID");
 			String kennnummer = datenhaltung.createTeam(lehrstuhlname_ID, teamData.get(0).get("projekttitel"), org_einheit_lehrstuhl, teamData.get(0).get("betreuer1"), teamData.get(0).get("betreuer2"));
+			ArrayList<HashMap<String, String>> hits_in_tempteammap = datenhaltung.getSubCat("tempteammap", "tempteamname_ID", push_into_db.get("tempteamname_ID"));
 			
+			//Teilnehmer von tempteammap in teammap kopieren
+			for(int i=0; i<hits_in_tempteammap.size(); i++) {
+				if(hits_in_tempteammap.get(i).get("tempteamname_ID").equals(push_into_db.get("tempteamname_ID"))) {
+					ArrayList<HashMap<String, String>> teammitglied = datenhaltung.getSubCat("account", "accountname_ID", hits_in_tempteammap.get(i).get("accountname_ID"));
+	                ArrayList<HashMap<String, String>> teammap_hits = datenhaltung.getSubCat("teammap", "accountname_ID", hits_in_tempteammap.get(i).get("accountname_ID"), "teamname_ID");
+	                if(!teammitglied.isEmpty() && teammitglied.get(0).get("rollename_ID").equals("Teilnehmer") && teammap_hits.isEmpty()){
+	                	HashMap<String, String> insert = new HashMap<>();
+	                	insert.put("accountname_ID", hits_in_tempteammap.get(i).get("accountname_ID"));
+	                	insert.put("teamname_ID", kennnummer);
+	                	datenhaltung.insertHashMap("teammap", insert);
+	                }
+	                //Alle Einträge in tempteammmap zu bestätigtem tempteam löschen
+	                datenhaltung.deleteRow("tempteammap", "tempteamname_ID", push_into_db.get("tempteamname_ID"));
+				}
+			}
 			
+			//Antragsteller in teammap kopieren und zum Teamvorsitzenden befördern
+			HashMap<String, String> insert = new HashMap<>();
+        	insert.put("accountname_ID", teamData.get(0).get("antragsteller"));
+        	insert.put("teamname_ID", kennnummer);
+        	datenhaltung.insertHashMap("teammap", insert);
+        	datenhaltung.setTeamLeader(teamData.get(0).get("antragsteller"));
 		
+        	//tempteam Eintrag in DB löschen
+        	datenhaltung.deleteRow("tempteam", "tempteamname_ID", push_into_db.get("tempteamname_ID"));
+        	
+        	
+        	
 			Path path = Paths.get("C:/data" + kennnummer);
 			if (!Files.exists(path))
 			{
