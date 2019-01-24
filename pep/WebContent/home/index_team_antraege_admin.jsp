@@ -189,13 +189,13 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-4"><strong>Teammitglieder:</strong></label>
                                 <div class="col-sm-8">                   
-                                    <label class="col-form-label" id="lbl_team_member">-</label></br>
+                                    <label class="col-form-label" id="lbl_team_members">-</label></br>
                                 </div>   
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                    	<button id="btn_delete_groupe" type="button" class="btn btn-danger">Löschen</button>
+                    	<button id="btn_delete_team" type="button" class="btn btn-danger">Löschen</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
                     </div>
                 </div>
@@ -264,13 +264,54 @@
             for (int x = 0; x < html_contents.size(); x++){
              	%>
             	document.querySelector('#btn_confirm_tempteam_<% out.print(x+1); %>').addEventListener("click", function(){
-            		current_html_content = "<% out.print(html_contents.get(x).get("tempteamname_ID")); %>";
             		data['tempteamname_ID'] = current_html_content;
             		post("/pep/handle_db_write_confirm_teams", data);
+            	})
+            	
+            	document.querySelector('#btn_tempteam_more_<% out.print(x+1); %>').addEventListener("click", function(){
+            		current_html_content = "<% out.print(html_contents.get(x).get("tempteamname_ID")); %>";
+            		document.querySelector('#lbl_date').innerHTML = "<% out.print(html_contents.get(x).get("datum")); %>";
+            		document.querySelector('#lbl_team_chairman').innerHTML = "<% out.print(html_contents.get(x).get("antragsteller")); %>";
+            		document.querySelector('#lbl_supervisor_1').innerHTML = "<% out.print(html_contents.get(x).get("betreuer1")); %>";
+            		document.querySelector('#lbl_supervisor_2').innerHTML = "<% out.print(html_contents.get(x).get("betreuer2")); %>";
+            		<%
+            		ArrayList<HashMap<String, String>> lehrstuhl_tut_1 = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", html_contents.get(x).get("betreuer1"));
+                    String lehrstuhlname_ID = lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID");
+    				String org_einheit_lehrstuhl = lehrstuhl_tut_1.get(0).get("organisationseinheitname_ID");
+            		%>
+            		document.querySelector('#lbl_group').innerHTML = "<% out.print(org_einheit_lehrstuhl); %>";
+            		document.querySelector('#lbl_project').innerHTML = "<% out.print(html_contents.get(x).get("projekttitel")); %>";
+            		<%
+            		ArrayList<HashMap<String, String>> accounts_in_tempteam = datenhaltung.getSubCat("tempteammap", "tempteamname_ID", html_contents.get(x).get("tempteamname_ID"), "accountname_ID");
+	                String teammitglieder = "";
+	                for(int i=0; i<accounts_in_tempteam.size(); i++){
+						teammitglieder = teammitglieder + accounts_in_tempteam.get(i).get("accountname_ID");	
+						ArrayList<HashMap<String, String>> teammitglid = datenhaltung.getSubCat("account", "accountname_ID", accounts_in_tempteam.get(i).get("accountname_ID"), "rollename_ID");
+						ArrayList<HashMap<String, String>> teammap_hits = datenhaltung.getSubCat("teammap", "accountname_ID", accounts_in_tempteam.get(i).get("accountname_ID"), "teamname_ID");
+						
+						System.out.println(accounts_in_tempteam);
+						if(!teammitglid.isEmpty() && teammitglid.get(0).get("rollename_ID").equals("Teilnehmer") && teammap_hits.isEmpty()){
+							teammitglieder = teammitglieder + "<i class=\\\"far fa-check-circle fa-1x\\\" style=\\\"color:green\\\"></i>";
+							teammitglieder = teammitglieder + "</br>";
+						}
+						else{
+							teammitglieder = teammitglieder + "<i class=\\\"far fa-circle\\\" style=\\\"color:red\\\"></i>";
+							teammitglieder = teammitglieder + "</br>";
+						}
+	                }
+	                if(teammitglieder.equals("")){
+	                	teammitglieder = "-";
+	                }
+	                %>
+	                document.querySelector('#lbl_team_members').innerHTML = "<% out.print(teammitglieder); %>";
             	})
             <%
            	}
             %>
+            
+            document.querySelector('#btn_delete_team').addEventListener("click", function(){
+        		
+        	})
         </script>
         
         <!-- JavaScript files-->
