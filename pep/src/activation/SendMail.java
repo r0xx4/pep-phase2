@@ -63,7 +63,7 @@ public class SendMail {
 		ArrayList<HashMap<String, String>> user=datenhaltung.getSubCat("account", "accountname_ID", receiver);
 		String pw=user.get(0).get("bestaetigungspasswort");
 		String id=user.get(0).get("anonyme_ID");
-		String msg = "Bitte klicken sie auf den folgenden Link um ihren account zu aktivieren: /n "+ "http://localhost:8080/pep/Activation_Mail?ID="+"id"+"&Password="+"pw";
+		String msg = "Bitte klicken sie auf den folgenden Link um ihren account zu aktivieren: \n "+ "http://localhost:8080/pep/activation_mail?ID="+id+"&Password="+pw;
 		message.setContent(msg,"text/plain");
 	    Transport.send(message);
 		}

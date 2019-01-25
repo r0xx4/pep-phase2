@@ -18,7 +18,7 @@ import data_management.Driver;
 /**
  * Servlet implementation class ActivationMail
  */
-@WebServlet("/Activation_Mail")
+@WebServlet("/activation_mail")
 public class ActivationMail extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -42,6 +42,7 @@ public class ActivationMail extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("hi");
 		// TODO Auto-generated method stub
 		HashMap<String, String> account_acctivation = new HashMap<>();
 		for (String key : request.getParameterMap().keySet())
@@ -56,6 +57,7 @@ public class ActivationMail extends HttpServlet {
 		String pworg=user.get(0).get("bestaetigungspasswort");
 		if(pw.equals(pworg))
 		{
+			System.out.println("lol");
 			//datenhaltung.activate(id);
 			PrintWriter out = response.getWriter();
 			out.println("<!DOCTYPE html>");
