@@ -37,7 +37,7 @@ public class SendMail {
 	    properties.put("mail.smtp.host", "mail.gmx.net");
 	    properties.put("mail.smtp.ssl.trust", "mail.gmx.net");
 	    properties.put("mail.smtp.starttls.enable", "true");
-	    properties.put("mail.smtp.port", "25");
+	    properties.put("mail.smtp.port", "587");
 	    properties.put("mail.smtp.auth", "true");
 	    properties.put("mail.smtp.user", sender);
 	    properties.put("mail.smtp.password", password);
@@ -64,7 +64,7 @@ public class SendMail {
 		String pw=user.get(0).get("bestaetigungspasswort");
 		String id=user.get(0).get("anonyme_ID");
 		String msg = "Bitte klicken sie auf den folgenden Link um ihren account zu aktivieren: /n "+ "http://localhost:8080/pep/Activation_Mail?ID="+"id"+"&Password="+"pw";
-		
+		message.setContent(msg,"text/plain");
 	    Transport.send(message);
 		}
 		catch (MessagingException e) {
