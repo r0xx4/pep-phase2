@@ -521,7 +521,7 @@
             	post("/pep/delete_entry", del);
 			}
             
-            document.querySelector('#select_filter').addEventListener("input", reloadPageWithFilter);
+            document.querySelector('#select_filter').addEventListener("change", reloadPageWithFilter);
             function reloadPageWithFilter(){
             	window.open("/pep/home/show_accounts?filter=" + document.querySelector('#select_filter').value, "_self");
             }
