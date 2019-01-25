@@ -1,6 +1,7 @@
 package activation;
 import com.sun.mail.smtp.SMTPTransport;
 import java.security.Security;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,7 +24,7 @@ import javax.activation.*;
 public class SendMail {
 	
 	
-	public static void sendGMX(String receiver) throws MessagingException
+	public static void sendGMX(String receiver) throws MessagingException, SQLException
 	{
 		try {
 		
@@ -59,7 +60,7 @@ public class SendMail {
 	    message.setSubject("Aktivierungsmail für das PeP");
 		 //to-Do mit driver
 		Driver datenhaltung = new Driver();
-		ArrayList<HashMap<String, String>> user=getSubCat("account", "accountname_ID", to);
+		ArrayList<HashMap<String, String>> user=datenhaltung.getSubCat("account", "accountname_ID", receiver);
 		String pw=user.get(0).get("bestaetigungspasswort");
 		String id=user.get(0).get("anonyme_ID");
 		String msg = "Bitte klicken sie auf den folgenden Link um ihren account zu aktivieren: /n "+ "http://localhost:8080/pep/Activation_Mail?ID="+"id"+"&Password="+"pw";
