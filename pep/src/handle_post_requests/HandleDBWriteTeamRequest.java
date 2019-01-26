@@ -80,8 +80,8 @@ public class HandleDBWriteTeamRequest extends HttpServlet {
 				
 				if (rolle.equals("Teilnehmer") || rolle.equals("Teamleiter"))
 				{
-					if(!team.isEmpty() || !teamRequests.isEmpty()) {
-						
+					if(!team.isEmpty()) {
+						out.println("window.alert(\"Error!\");");
 					}
 					else {
 						if (!lehrstuhl_tut_1.isEmpty())
@@ -90,10 +90,17 @@ public class HandleDBWriteTeamRequest extends HttpServlet {
 							for(int i=0; i<push_into_db.size() - 3; i++) {
 								teammitglieder.add(push_into_db.get("teammitglied" + (i+1)));
 							}
-							//String lehrstuhlname_ID = lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID");
-							//String org_einheit_lehrstuhl = datenhaltung.getSubCat("lehrstuhl", "lehrstuhlname_ID", lehrstuhlname_ID, "organisationseinheitname_ID").get(0).get("organisationseinheitname_ID");
-							datenhaltung.createTeamRequest(push_into_db.get("betreuer1") , push_into_db.get("betreuer2"), push_into_db.get("projekttitel"), accountname_ID, teammitglieder);
-							//String kennnummer = datenhaltung.createTeam(lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID"), push_into_db.get("projekttitel"), org_einheit_lehrstuhl, push_into_db.get("betreuer1"), push_into_db.get("betreuer2"));
+							if(teamRequests.isEmpty()) {
+								//String lehrstuhlname_ID = lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID");
+								//String org_einheit_lehrstuhl = datenhaltung.getSubCat("lehrstuhl", "lehrstuhlname_ID", lehrstuhlname_ID, "organisationseinheitname_ID").get(0).get("organisationseinheitname_ID");
+								datenhaltung.createTeamRequest(push_into_db.get("betreuer1") , push_into_db.get("betreuer2"), push_into_db.get("projekttitel"), accountname_ID, teammitglieder);
+								//String kennnummer = datenhaltung.createTeam(lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID"), push_into_db.get("projekttitel"), org_einheit_lehrstuhl, push_into_db.get("betreuer1"), push_into_db.get("betreuer2"));
+							}
+							else {
+								datenhaltung.deleteRow("tempteammap", "tempteamname_ID", teamRequests.get(0).get("tempteamname_ID"));
+								datenhaltung.deleteRow("tempteam", "tempteamname_ID", teamRequests.get(0).get("tempteamname_ID"));
+								datenhaltung.createTeamRequest(push_into_db.get("betreuer1") , push_into_db.get("betreuer2"), push_into_db.get("projekttitel"), accountname_ID, teammitglieder);
+							}
 						}
 						else
 						{

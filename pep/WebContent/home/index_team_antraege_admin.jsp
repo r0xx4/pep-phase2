@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Teamansicht</title>
+        <title>Team Anträge</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Bootstrap CSS-->
@@ -195,7 +195,7 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                    	<button id="btn_delete_team" type="button" class="btn btn-danger">Löschen</button>
+                    	<button id="btn_delete_team_request" type="button" class="btn btn-danger">Löschen</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
                     </div>
                 </div>
@@ -259,12 +259,13 @@
             }
             
             var current_html_content;
-			var data = {};
+			
             
             <%
             for (int x = 0; x < html_contents.size(); x++){
              	%>
             	document.querySelector('#btn_confirm_tempteam_<% out.print(x+1); %>').addEventListener("click", function(){
+            		var data = {};
             		data['tempteamname_ID'] = current_html_content;
             		post("/pep/handle_db_write_confirm_teams", data);
             	})
@@ -290,14 +291,20 @@
 						ArrayList<HashMap<String, String>> teammitglid = datenhaltung.getSubCat("account", "accountname_ID", accounts_in_tempteam.get(i).get("accountname_ID"), "rollename_ID");
 						ArrayList<HashMap<String, String>> teammap_hits = datenhaltung.getSubCat("teammap", "accountname_ID", accounts_in_tempteam.get(i).get("accountname_ID"), "teamname_ID");
 						
-						System.out.println(accounts_in_tempteam);
-						if(!teammitglid.isEmpty() && teammitglid.get(0).get("rollename_ID").equals("Teilnehmer") && teammap_hits.isEmpty()){
-							teammitglieder = teammitglieder + " <i class=\\\"far fa-check-circle fa-1x\\\" style=\\\"color:green\\\"></i>";
-							teammitglieder = teammitglieder + "</br>";
+						if(!teammitglid.isEmpty() && teammitglid.get(0).get("rollename_ID").equals("Teilnehmer") && teammap_hits.isEmpty() && !html_contents.get(x).get("antragsteller").equals(accounts_in_tempteam.get(i).get("accountname_ID"))){
+							teammitglieder = teammitglieder + " <i class=\\\"far fa-check-circle fa-1x\\\" style=\\\"color:green\\\"></i></br>";
 						}
-						else{
-							teammitglieder = teammitglieder + " <i class=\\\"far fa-times-circle\\\" style=\\\"color:red\\\"></i>";
-							teammitglieder = teammitglieder + "</br>";
+						else if(teammitglid.isEmpty()){
+							teammitglieder = teammitglieder + " <i class=\\\"far fa-times-circle\\\" style=\\\"color:red\\\" data-toggle=\\\"tooltip\\\" data-placement=\\\"top\\\" title=\\\"Account existiert nicht\\\"></i></br>";
+						}
+						else if(!teammitglid.get(0).get("rollename_ID").equals("Teilnehmer")){
+							teammitglieder = teammitglieder + " <i class=\\\"far fa-times-circle\\\" style=\\\"color:red\\\" data-toggle=\\\"tooltip\\\" data-placement=\\\"top\\\" title=\\\"Kein Teilnehmer Account\\\"></i></br>";
+						}
+						else if(!teammap_hits.isEmpty()){
+							teammitglieder = teammitglieder + " <i class=\\\"far fa-times-circle\\\" style=\\\"color:red\\\" data-toggle=\\\"tooltip\\\" data-placement=\\\"top\\\" title=\\\"Teilnehmer bereits in anderem Team\\\"></i></br>";
+						}
+						else if(html_contents.get(x).get("antragsteller").equals(accounts_in_tempteam.get(i).get("accountname_ID"))){
+							teammitglieder = teammitglieder + " <i class=\\\"far fa-times-circle\\\" style=\\\"color:red\\\" data-toggle=\\\"tooltip\\\" data-placement=\\\"top\\\" title=\\\"Teilnehmer doppelt\\\"></i></br>";
 						}
 	                }
 	                if(teammitglieder.equals("")){
@@ -310,9 +317,13 @@
            	}
             %>
             
-            document.querySelector('#btn_delete_team').addEventListener("click", function(){
-        		
-        	})
+            document.querySelector('#btn_delete_team_request').addEventListener("click", deleteTeamRequest);
+            function deleteTeamRequest(){
+            	var del = {};
+            	del["type"] = "tempteam";
+            	del["id"] = current_html_content;
+            	post("/pep/delete_entry", del);
+			}
         </script>
         
         <!-- JavaScript files-->

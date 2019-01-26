@@ -67,9 +67,9 @@ public class Driver {
 
 		if(!executeUpdate(sql))
 			return false;
-		System.out.println(getSubCat("tempteam", "antragsteller", teamvorsitzender, "tempteamname_ID").get(0));
+		
 		String s=getSubCat("tempteam", "antragsteller", teamvorsitzender, "tempteamname_ID").get(0).get("tempteamname_ID");
-		System.out.println(s);
+		
 		HashMap<String, String> h;
 		for(String str:teammitglieder) {
 			h = new HashMap();

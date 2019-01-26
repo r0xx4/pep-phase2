@@ -72,7 +72,7 @@ public class HandleDBWriteConfirmTeams extends HttpServlet {
 				if(hits_in_tempteammap.get(i).get("tempteamname_ID").equals(push_into_db.get("tempteamname_ID"))) {
 					ArrayList<HashMap<String, String>> teammitglied = datenhaltung.getSubCat("account", "accountname_ID", hits_in_tempteammap.get(i).get("accountname_ID"));
 	                ArrayList<HashMap<String, String>> teammap_hits = datenhaltung.getSubCat("teammap", "accountname_ID", hits_in_tempteammap.get(i).get("accountname_ID"), "teamname_ID");
-	                if(!teammitglied.isEmpty() && teammitglied.get(0).get("rollename_ID").equals("Teilnehmer") && teammap_hits.isEmpty()){
+	                if(!teammitglied.isEmpty() && teammitglied.get(0).get("rollename_ID").equals("Teilnehmer") && teammap_hits.isEmpty() && !teamData.get(0).get("antragsteller").equals(hits_in_tempteammap.get(i).get("accountname_ID"))){
 	                	HashMap<String, String> insert = new HashMap<>();
 	                	insert.put("accountname_ID", hits_in_tempteammap.get(i).get("accountname_ID"));
 	                	insert.put("teamname_ID", kennnummer);

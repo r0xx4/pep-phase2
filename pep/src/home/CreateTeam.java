@@ -51,7 +51,7 @@ public class CreateTeam extends HttpServlet {
 				System.out.println(session_ID);
 				if (rolle.equals("Teilnehmer") || rolle.equals("Teamleiter"))
 				{
-					if(!team.isEmpty() || !teamRequests.isEmpty()) {
+					if(!team.isEmpty()) {
 						RequestDispatcher rd = request.getRequestDispatcher("/home");
 						rd.forward(request,  response);
 					}

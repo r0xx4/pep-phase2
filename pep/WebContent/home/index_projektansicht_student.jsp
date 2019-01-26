@@ -50,7 +50,7 @@
                 <ul class="sidebar-menu list-unstyled">
                     <li id="link_home" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-home-1 mr-3 text-gray"></i><span>Home</span></a></li>
                     <%
-                    if(teamname_ID.isEmpty() && teamRequests.isEmpty()){
+                    if(teamname_ID.isEmpty()){
                     	%>
                     	 <li id="link_create_team" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-earth-globe-1 mr-3 text-gray"></i><span>Team erstellen</span></a></li>
                     	<%
@@ -304,7 +304,7 @@
 	        	window.open("/pep/home/view_personal_info", "_self");
 	        }
 	        <%
-            if(teamname_ID.isEmpty() && teamRequests.isEmpty()){
+            if(teamname_ID.isEmpty()){
             	%>
 	        document.querySelector('#link_create_team').addEventListener("click", klickLinkCreateTeam); 
 	        function klickLinkCreateTeam(){
@@ -330,11 +330,17 @@
 				form.appendChild(element);
 			}
 			
+		 	<% 
+            if (!teamname_ID.isEmpty()){
+           	%>
 			document.querySelector('#btn_submit').addEventListener("click", sendPostForm);
 			function sendPostForm(){
 				document.body.appendChild(form);
 				form.submit();
 			}
+			<%
+            }
+		 	%>
 			
 			
 			/*

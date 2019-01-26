@@ -4,7 +4,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Startseite Student</title>
+        <title>Team erstellen</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- Bootstrap CSS-->
@@ -155,7 +155,7 @@
                         var hiddenField = document.createElement("input");
                         hiddenField.setAttribute("type", "hidden");
                         hiddenField.setAttribute("name", key);
-                        hiddenField.setAttribute("value", params[key]);
+                       	hiddenField.setAttribute("value", params[key]);
                         form.appendChild(hiddenField);
                     }
                 }
@@ -222,6 +222,30 @@
                 }
                 
 			}
+			
+			<%
+			ArrayList<HashMap<String, String>> tempteam_hits = datenhaltung.getSubCat("tempteam", "antragsteller", accountname_ID);
+			
+			if(!tempteam_hits.isEmpty()){
+				ArrayList<HashMap<String, String>> tempteammap_hits = datenhaltung.getSubCat("tempteammap", "tempteamname_ID", tempteam_hits.get(0).get("tempteamname_ID"));
+				System.out.println("hi");
+			%>
+				document.getElementById('select_supervisor_1').value = "<% out.print(tempteam_hits.get(0).get("betreuer1")); %>";
+				document.getElementById('select_supervisor_2').value = "<% out.print(tempteam_hits.get(0).get("betreuer2")); %>";
+				document.getElementById('input_project_name').value = "<% out.print(tempteam_hits.get(0).get("projekttitel")); %>";
+				var counter = 1;
+				<%
+				for(int i=0; i<tempteammap_hits.size(); i++){
+					if(tempteammap_hits.get(i).get("tempteamname_ID").equals(tempteam_hits.get(0).get("tempteamname_ID"))){
+					
+					%>
+					document.getElementById('input_teammember' + counter + '_name').value = "<% out.print(tempteammap_hits.get(i).get("accountname_ID")); %>";
+					counter++;
+					<%
+					}
+				}
+			}
+			%>
         </script>
     </body>
 </html>

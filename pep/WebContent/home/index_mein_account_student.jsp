@@ -87,7 +87,7 @@
 					class="sidebar-link text-muted"><i
 						class="o-home-1 mr-3 text-gray"></i><span>Home</span></a></li>
 				<%
-                    if(teamname_ID.isEmpty() && teamRequests.isEmpty()){
+                    if(teamname_ID.isEmpty()){
                     	%>
                     	 <li id="link_create_team" class="sidebar-list-item"><a href="#" class="sidebar-link text-muted"><i class="o-earth-globe-1 mr-3 text-gray"></i><span>Team erstellen</span></a></li>
                     	<%
@@ -225,12 +225,17 @@
         function klickLinkPersonalSettingsEvent(){
         	window.open("/pep/home/view_personal_info", "_self");
         }
+        <%
+        if(teamname_ID.isEmpty()){
+        	%>
         document.querySelector('#link_create_team').addEventListener("click", klickLinkCreateTeam); 
         function klickLinkCreateTeam(){
         	window.open("/pep/home/create_team", "_self");
         }
-		document.querySelector('#link_show_project').addEventListener("click",
-				klickLinkShowProjectEvent);
+        <%
+        }
+        %>
+		document.querySelector('#link_show_project').addEventListener("click", klickLinkShowProjectEvent);
 		function klickLinkShowProjectEvent() {
         	window.open("/pep/home/show_project", "_self");
 		}
