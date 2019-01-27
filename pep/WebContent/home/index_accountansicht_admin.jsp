@@ -57,7 +57,6 @@
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 class="h2">Accountansicht</h1>
                         <div>
-                        	<label for="select_filter" class="col-form-label">Ansicht einschränken:</label>
                         	<select id="select_filter" class="custom-select form-control">
 		                    	<option value = "none">Kein Filter</option>
 		                        <option value = "admin">Alle Admins</option>
