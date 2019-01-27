@@ -89,6 +89,9 @@ public class HandleFileUpload extends HttpServlet {
 					{
 						FileItem fileItem = fileItemsIterator.next();
 						String pathname = "C:/data" + dateipfad_team + "/" + fileItem.getFieldName() + ".pdf";
+						HashMap<String, String> sqlUpdate = new HashMap<String, String>();
+						sqlUpdate.put("accountname_ID_"+fileItem.getFieldName(), accountname_ID);
+						datenhaltung.updateTable("team", team, sqlUpdate);
 						File target = new File(pathname);
 						System.out.println(fileItem);
 						fileItem.write(target);

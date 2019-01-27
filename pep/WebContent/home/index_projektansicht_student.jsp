@@ -112,9 +112,10 @@
                         String defaultText = "PDF Datei hochladen";
                         String uploadBericht = "";
                         Path pathBericht = Paths.get("c:/data" + teamPath + "/Bericht.pdf");
+                        String uploaderBericht = datenhaltung.getSubCat("team", "teamname_ID", teamname_ID.get(0).get("teamname_ID"), "accountname_ID_Bericht").get(0).get("accountname_ID_Bericht");
                         if(Files.exists(pathBericht)){
                         	BasicFileAttributes attr = Files.readAttributes(pathBericht, BasicFileAttributes.class);
-                        	uploadBericht = "Hochgeladen am " + dt.format(attr.lastModifiedTime().toMillis());
+                        	uploadBericht = "Hochgeladen am " + dt.format(attr.lastModifiedTime().toMillis()) + " von " + uploaderBericht;
                         }
                         %>
                     	<div class="form-group row">
@@ -151,9 +152,10 @@
                         <%
                         String uploadPraesentation = "";
                         Path pathPraesentation = Paths.get("c:/data" + teamPath + "/Praesentation.pdf");
+                        String uploaderPraesentation = datenhaltung.getSubCat("team", "teamname_ID", teamname_ID.get(0).get("teamname_ID"), "accountname_ID_Praesentation").get(0).get("accountname_ID_Praesentation");
                         if(Files.exists(pathPraesentation)){
                         	BasicFileAttributes attr = Files.readAttributes(pathPraesentation, BasicFileAttributes.class);
-                        	uploadPraesentation = "Hochgeladen am " + dt.format(attr.lastModifiedTime().toMillis());
+                        	uploadPraesentation = "Hochgeladen am " + dt.format(attr.lastModifiedTime().toMillis()) + " von " + uploaderPraesentation;
                         }
                         %>
                         <div class="form-group row">
@@ -190,9 +192,10 @@
                         <%
                         String uploadPoster = "";
                         Path pathPoster = Paths.get("c:/data" + teamPath + "/Poster.pdf");
+                        String uploaderPoster = datenhaltung.getSubCat("team", "teamname_ID", teamname_ID.get(0).get("teamname_ID"), "accountname_ID_Poster").get(0).get("accountname_ID_Poster");
                         if(Files.exists(pathPoster)){
                         	BasicFileAttributes attr = Files.readAttributes(pathPoster, BasicFileAttributes.class);
-                        	uploadPoster = "Hochgeladen am " + dt.format(attr.lastModifiedTime().toMillis());
+                        	uploadPoster = "Hochgeladen am " + dt.format(attr.lastModifiedTime().toMillis()) + " von " + uploaderPoster;
                         }
                         %>
                         <div class="form-group row">
@@ -229,9 +232,10 @@
                         <%
                         String uploadZusammenfassung = "";
                         Path pathZusammenfassung = Paths.get("c:/data" + teamPath + "/Zusammenfassung.pdf");
+                        String uploaderZusammenfassung = datenhaltung.getSubCat("team", "teamname_ID", teamname_ID.get(0).get("teamname_ID"), "accountname_ID_Zusammenfassung").get(0).get("accountname_ID_Zusammenfassung");
                         if(Files.exists(pathZusammenfassung)){
                         	BasicFileAttributes attr = Files.readAttributes(pathZusammenfassung, BasicFileAttributes.class);
-                        	uploadZusammenfassung = "Hochgeladen am " + dt.format(attr.lastModifiedTime().toMillis());
+                        	uploadZusammenfassung = "Hochgeladen am " + dt.format(attr.lastModifiedTime().toMillis())  + " von " + uploaderZusammenfassung;
                         }
                         %>
 	                    <div class="form-group row">
