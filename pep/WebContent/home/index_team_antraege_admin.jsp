@@ -266,7 +266,7 @@
              	%>
             	document.querySelector('#btn_confirm_tempteam_<% out.print(x+1); %>').addEventListener("click", function(){
             		var data = {};
-            		data['tempteamname_ID'] = current_html_content;
+            		data['tempteamname_ID'] = <% out.print(html_contents.get(x).get("tempteamname_ID")); %>;
             		post("/pep/handle_db_write_confirm_teams", data);
             	})
             	

@@ -37,6 +37,7 @@ public class Driver {
 	public String createTeam(String lehrstuhl, String projekttitel, String organisationseinheit, String betreuer1,
 			String betreuer2) throws SQLException {
 
+		System.out.println(lehrstuhl);
 		String kennnummer = generateKennnummer(lehrstuhl);
 		String sql = "Insert Into team (teamname_ID,teamnummer,projekttitel,projektpfad,organisationseinheitname_ID) Values('"
 				+ kennnummer + "','" + kennnummer.substring(2, 4) + "','" + projekttitel + "','" + "/" + kennnummer

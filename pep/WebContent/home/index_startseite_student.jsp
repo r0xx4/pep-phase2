@@ -84,9 +84,20 @@
 				Poster: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabePoster", "endDatum").get(0).get("endDatum")); %></font><br>
 				Einseitige Zusammenfassung: <font color="red"><% out.print(datenhaltung.getSubCat("phase", "phasename_ID", "AbgabeZusammenfassung", "endDatum").get(0).get("endDatum")); %></font><br>
 				<div class="pt-3 pb-2">
-                <%
+				
+				<%
+				if(!teamRequests.isEmpty()){
+				%>
+				<div>
+				<label>Laden Sie hier das Anmeldeformular für das Projekt herunter und lassen Sie es von allen Teammitgliedern unterschreiben: <a href="/pep/team_list_pdf?<% out.print(user); %>">Anmeldeformular</a></label>
+				</div>
+				<%
+				}
+				%>
+				
+                <%-- <%
                 String currentPhase = datenhaltung.getCurrentPhase();
-                if(currentPhase == null){
+                 if(currentPhase == null){
                 	
                 }
                 else if(currentPhase.equals("Registrierungsphase")){
@@ -118,7 +129,7 @@
                 	<strong>In der Bewertungsphase haben Sie die Aufgabe, ihr Projet vorzustellen</strong>
                     <%
                 }
-                %>
+                %> --%>
                 </div>
                 </div>
                 <footer class="footer bg-white shadow align-self-end py-3 px-xl-5 w-100">

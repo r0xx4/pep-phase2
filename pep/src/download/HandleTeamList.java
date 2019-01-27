@@ -43,29 +43,29 @@ public class HandleTeamList extends HttpServlet {
 		Driver datenhaltung = new Driver();
 		try {
 			
-		ArrayList<HashMap<String, String>> teamID = datenhaltung.getSubCat("teammap", "accountname_ID", mail, "teamname_ID");
-		if(!teamID.isEmpty()) {
-			HashMap<String, String> team = datenhaltung.getSubCat("team", teamID.get(0).get("teamname_ID")).get(0);
-			String pathTeam = team.get("projektpfad");
-			String projectTitle = team.get("projekttitel");
-			ArrayList<HashMap<String, String>> teammitglieder = datenhaltung.getSubCat("teammap", "teamname_ID", teamID.get(0).get("teamname_ID"), "accountname_ID");
+		ArrayList<HashMap<String, String>> tempTeam = datenhaltung.getSubCat("tempteam", "antragsteller", mail);
+		if(!tempTeam.isEmpty()) {
+			String projectTitle = tempTeam.get(0).get("projekttitel");
+			ArrayList<HashMap<String, String>> teammitglieder = datenhaltung.getSubCat("tempteammap", "tempteamname_ID", tempTeam.get(0).get("tempteamname_ID"), "accountname_ID");
 			ArrayList<String> teammitgliednamen = new ArrayList<String>();
+			teammitgliednamen.add(tempTeam.get(0).get("antragsteller"));
 			for(HashMap<String, String> teammitglied : teammitglieder) {
-				HashMap<String, String> accountInfo = datenhaltung.getSubCat("account", teammitglied.get("accountname_ID")).get(0);
-				teammitgliednamen.add(accountInfo.get("vorname") + " " + accountInfo.get("nachname"));
+				teammitgliednamen.add(teammitglied.get("accountname_ID"));
+//				HashMap<String, String> accountInfo = datenhaltung.getSubCat("account", teammitglied.get("accountname_ID")).get(0);
+//				teammitgliednamen.add(accountInfo.get("vorname") + " " + accountInfo.get("nachname"));
 			}
 			
-			Path path = Paths.get("c:/data" + pathTeam);
+			Path path = Paths.get("c:/data/teamlists");
 			if(!Files.exists(path)) {
-				new File("c:/data" + pathTeam).mkdirs();
+				new File("c:/data/teamlists").mkdirs();
 			}
 			
 			Pdfcreator pdf = new Pdfcreator();
-			pdf.createteilnehmerliste(teammitgliednamen, projectTitle, teamID.get(0).get("teamname_ID"), path.toString());
+			pdf.createteilnehmerliste(teammitgliednamen, projectTitle, tempTeam.get(0).get("tempteamname_ID"), path.toString());
 			
 			response.setContentType("text/html");
 			PrintWriter out = response.getWriter();
-			String file = teamID.get(0).get("teamname_ID") + ".pdf";
+			String file = tempTeam.get(0).get("tempteamname_ID") + ".pdf";
 			response.setContentType("APPLICATION/OCTET-STREAM");
 			response.setHeader("Content-Disposition", "attachment; filename=\""+file+"\"");
 			
