@@ -160,7 +160,7 @@
 			document.getElementById("inputMatriculationNumber").disabled=true;
             document.getElementById("inputCourseOfStudies").disabled=true;
             
-            document.querySelector('#inputRole').addEventListener("input", inputRoleOninputEvent); 
+            document.querySelector('#inputRole').addEventListener("change", inputRoleOninputEvent); 
             function inputRoleOninputEvent(){
                 if(document.querySelector("#inputRole").value == "Registrieren als"){
                     document.getElementById("inputMasterkey").disabled=true;
