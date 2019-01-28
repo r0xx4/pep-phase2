@@ -78,6 +78,7 @@ public class HandleDBResetSystem extends HttpServlet {
 						datenhaltung.deleteTabelContent("tempteam");
 						datenhaltung.setPhaseDates("Projektbewertungsphase", "2100-01-01", "2100-01-01");
 						
+						out.println("window.alert(\"Reset Erfolgreich!\");");
 						out.println("window.open(\"/pep/home\", \"_self\")");
 						out.println("</script>");
 						out.println("</body>");
