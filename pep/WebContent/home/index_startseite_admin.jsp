@@ -189,6 +189,9 @@
 					<label class="pt-3">Laden Sie hier ein komplettes Systembackup herunter 
 						(aktuelle Datenbank + Projektdaten): <a href="/pep/provide_system_backup_download">Backup</a>
 					</label></br>
+					<label class="pt-3">Resetten Sie hier das System und setzen Sie es auf den ursprünglichen Zustand zurück  
+						(<font color="red">Achtung: Daten in Datenbank sowie Projektdateien werden entgültig gelöscht</font>): <a href="/pep/handle_db_reset_system">Reset</a>
+					</label></br>
 				</div>
 			</div>
 			<footer

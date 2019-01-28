@@ -113,11 +113,10 @@ public class ProvideSystemBackupDownload extends HttpServlet {
 	
 	public static boolean deleteDirectory(File dir){
 		if (dir.isDirectory()){
-		File[] files = dir.listFiles();
-		for (File aktFile: files){
-		deleteDirectory(aktFile);
-		}
-
+			File[] files = dir.listFiles();
+			for (File aktFile: files){
+				deleteDirectory(aktFile);
+			}
 		}
 		return dir.delete();
 	}

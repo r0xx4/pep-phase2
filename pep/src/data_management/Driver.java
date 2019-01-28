@@ -90,7 +90,7 @@ public class Driver {
 	// Method setPhaseDates
 	public boolean setPhaseDates(String phasenName, String startDate, String endDate) throws SQLException {
 		String sql = "UPDATE phase SET startDatum='" + startDate + "', endDatum='" + endDate + "' "
-				+ "Where phasenname_ID Like '" + phasenName + "'";
+				+ "Where phasename_ID Like '" + phasenName + "'";
 		return executeUpdate(sql);
 	}
 
@@ -148,6 +148,13 @@ public class Driver {
 		sql.append(" LIKE '");
 		sql.append(iDV);
 		sql.append("';");
+		return executeUpdate(sql.toString());
+	}
+	
+	public boolean deleteTabelContent(String table) throws SQLException {
+		StringBuilder sql = new StringBuilder("DELETE FROM ");
+		sql.append(table);
+		sql.append(";");
 		return executeUpdate(sql.toString());
 	}
 

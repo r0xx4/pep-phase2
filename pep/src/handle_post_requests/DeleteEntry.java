@@ -38,7 +38,6 @@ public class DeleteEntry extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("executed");
 		HashMap<String, String> to_delete = new HashMap<>();
 		for (String key : request.getParameterMap().keySet())
 		{
@@ -49,6 +48,7 @@ public class DeleteEntry extends HttpServlet {
 		try
 		{
 			datenhaltung.deleteRow(to_delete.get("type"), to_delete.get("id"));
+			System.out.println("executed");
 		}
 		catch (SQLException e)
 		{
