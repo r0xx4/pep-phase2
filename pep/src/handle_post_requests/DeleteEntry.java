@@ -48,10 +48,6 @@ public class DeleteEntry extends HttpServlet {
 		Driver datenhaltung = new Driver();
 		try
 		{
-<<<<<<< HEAD
-			datenhaltung.deleteRow(to_delete.get("type"), to_delete.get("id"));
-			System.out.println("executed");
-=======
 			if(to_delete.get("type").equals("team")) {
 				ArrayList<HashMap<String, String>> teammap = datenhaltung.getSubCat("teammap", "teamname_ID", to_delete.get("id"));
 				for(HashMap<String, String> account : teammap) {
@@ -68,7 +64,6 @@ public class DeleteEntry extends HttpServlet {
 			else {
 				datenhaltung.deleteRow(to_delete.get("type"), to_delete.get("id"));
 			}
->>>>>>> branch 'master' of https://github.com/r0xx4/pep-phase2.git
 		}
 		catch (SQLException e)
 		{
