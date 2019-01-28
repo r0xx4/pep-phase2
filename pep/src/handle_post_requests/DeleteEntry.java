@@ -3,6 +3,7 @@ package handle_post_requests;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -47,8 +48,27 @@ public class DeleteEntry extends HttpServlet {
 		Driver datenhaltung = new Driver();
 		try
 		{
+<<<<<<< HEAD
 			datenhaltung.deleteRow(to_delete.get("type"), to_delete.get("id"));
 			System.out.println("executed");
+=======
+			if(to_delete.get("type").equals("team")) {
+				ArrayList<HashMap<String, String>> teammap = datenhaltung.getSubCat("teammap", "teamname_ID", to_delete.get("id"));
+				for(HashMap<String, String> account : teammap) {
+					String rolle = datenhaltung.getSubCat("account", "accountname_ID", account.get("accountname_ID"), "rollename_ID").get(0).get("rollename_ID");
+					if(rolle.equals("Teamleiter")) {
+						HashMap<String, String> update = new HashMap<String, String>();
+						update.put("rollename_ID", "Teilnehmer");
+						datenhaltung.updateTable("account", account.get("accountname_ID"), update);
+					}
+				}
+				datenhaltung.deleteRow(to_delete.get("type"), to_delete.get("id"));
+
+			}
+			else {
+				datenhaltung.deleteRow(to_delete.get("type"), to_delete.get("id"));
+			}
+>>>>>>> branch 'master' of https://github.com/r0xx4/pep-phase2.git
 		}
 		catch (SQLException e)
 		{
