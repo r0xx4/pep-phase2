@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -65,53 +66,70 @@ public class HandleFileUpload extends HttpServlet {
 		Driver datenhaltung = new Driver();
 		HttpSession session = request.getSession();
 		String session_ID = (String)(session.getAttribute("session_id"));
-		try
+		if (session_ID != null)
 		{
-			String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
-			ArrayList<HashMap<String, String>> team_db_format = datenhaltung.getSubCat("teammap", "accountname_ID", accountname_ID, "teamname_ID");
-			if (team_db_format.isEmpty())
+			try
 			{
-				PrintWriter out = response.getWriter();
-				out.println("<script>");
-				out.println("window.open(\"/pep/home\", \"_self\")");
-				out.println("</script>");
-				out.close();
-			}
-			else
-			{
-				String team = team_db_format.get(0).get("teamname_ID");
-				String dateipfad_team = datenhaltung.getSubCat("team", "teamname_ID", team, "projektpfad").get(0).get("projektpfad");
-				try
+				String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
+				String rolle = datenhaltung.getSubCat("account", accountname_ID).get(0).get("rollename_ID");
+				if (rolle.equals("Teilnehmer") || rolle.equals("Teamleiter"))
 				{
-					List<FileItem> fileItemsList = uploader.parseRequest(request);
-					Iterator<FileItem> fileItemsIterator = fileItemsList.iterator();
-					while(fileItemsIterator.hasNext())
+					ArrayList<HashMap<String, String>> team_db_format = datenhaltung.getSubCat("teammap", "accountname_ID", accountname_ID, "teamname_ID");
+					if (team_db_format.isEmpty())
 					{
-						FileItem fileItem = fileItemsIterator.next();
-						String pathname = "C:/data" + dateipfad_team + "/" + fileItem.getFieldName() + ".pdf";
-						HashMap<String, String> sqlUpdate = new HashMap<String, String>();
-						sqlUpdate.put("accountname_ID_"+fileItem.getFieldName(), accountname_ID);
-						datenhaltung.updateTable("team", team, sqlUpdate);
-						File target = new File(pathname);
-						System.out.println(fileItem);
-						fileItem.write(target);
+						PrintWriter out = response.getWriter();
+						out.println("<script>");
+						out.println("window.open(\"/pep/home\", \"_self\")");
+						out.println("</script>");
+						out.close();
+					}
+					else
+					{
+						String team = team_db_format.get(0).get("teamname_ID");
+						String dateipfad_team = datenhaltung.getSubCat("team", "teamname_ID", team, "projektpfad").get(0).get("projektpfad");
+						try
+						{
+							List<FileItem> fileItemsList = uploader.parseRequest(request);
+							Iterator<FileItem> fileItemsIterator = fileItemsList.iterator();
+							while(fileItemsIterator.hasNext())
+							{
+								FileItem fileItem = fileItemsIterator.next();
+								String pathname = "C:/data" + dateipfad_team + "/" + fileItem.getFieldName() + ".pdf";
+								HashMap<String, String> sqlUpdate = new HashMap<String, String>();
+								sqlUpdate.put("accountname_ID_"+fileItem.getFieldName(), accountname_ID);
+								datenhaltung.updateTable("team", team, sqlUpdate);
+								File target = new File(pathname);
+								System.out.println(fileItem);
+								fileItem.write(target);
+							}
+						}
+						catch (Exception e) 
+						{
+							e.printStackTrace();
+						}
+						
+						PrintWriter out = response.getWriter();
+						out.println("<script>");
+						out.println("window.open(\"/pep/home/show_project\", \"_self\")");
+						out.println("</script>");
+						out.close();
 					}
 				}
-				catch (Exception e) 
+				else
 				{
-					e.printStackTrace();
+					RequestDispatcher rd = request.getRequestDispatcher("/login");
+					rd.forward(request,  response);
 				}
-				
-				PrintWriter out = response.getWriter();
-				out.println("<script>");
-				out.println("window.open(\"/pep/home/show_project\", \"_self\")");
-				out.println("</script>");
-				out.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
 			}
 		}
-		catch (SQLException e)
+		else
 		{
-			e.printStackTrace();
+			RequestDispatcher rd = request.getRequestDispatcher("/login");
+			rd.forward(request,  response);
 		}
 	}
 }

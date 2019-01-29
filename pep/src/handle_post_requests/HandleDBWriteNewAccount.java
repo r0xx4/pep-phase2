@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -49,35 +50,56 @@ public class HandleDBWriteNewAccount extends HttpServlet {
 			else
 				account_data.put(key, null);
 		}
+		
 		Driver datenhaltung = new Driver();
-		try 
+		HttpSession session = request.getSession();
+		String session_ID = (String)(session.getAttribute("session_id"));
+		if (session_ID != null)
 		{
-			account_data.put("password", Driver.getHash(account_data.get("password").getBytes(StandardCharsets.UTF_8)));
-		} 
-		catch (NoSuchAlgorithmException e1) 
-		{
-			e1.printStackTrace();
+			try
+			{
+				String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
+				String rolle = datenhaltung.getSubCat("account", accountname_ID).get(0).get("rollename_ID");
+				if (rolle.equals("Admin"))
+				{
+					try 
+					{
+						account_data.put("password", Driver.getHash(account_data.get("password").getBytes(StandardCharsets.UTF_8)));
+					} 
+					catch (NoSuchAlgorithmException e1) 
+					{
+						e1.printStackTrace();
+					}
+					datenhaltung.insertHashMap("account", account_data);
+					PrintWriter out = response.getWriter();
+					out.println("<!DOCTYPE html>");
+					out.println("<html>");
+					out.println("<head>");
+					out.println("<meta charset=\"utf-8\">");
+					out.println("</head>");
+					out.println("<body>");
+					out.println("<script>");
+					out.println("window.alert(\"Account hinzugefügt!\");");
+					out.println("window.open(\"/pep/home/show_accounts\", \"_self\");");
+					out.println("</script>");
+					out.println("</body>");
+					out.close();
+				}
+				else
+				{
+					RequestDispatcher rd = request.getRequestDispatcher("/login");
+					rd.forward(request,  response);
+				}
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 		}
-		try 
+		else
 		{
-			datenhaltung.insertHashMap("account", account_data);
-			PrintWriter out = response.getWriter();
-			out.println("<!DOCTYPE html>");
-			out.println("<html>");
-			out.println("<head>");
-			out.println("<meta charset=\"utf-8\">");
-			out.println("</head>");
-			out.println("<body>");
-			out.println("<script>");
-			out.println("window.alert(\"Account hinzugefügt!\");");
-			out.println("window.open(\"/pep/home/show_accounts\", \"_self\");");
-			out.println("</script>");
-			out.println("</body>");
-			out.close();
-		} 
-		catch (Exception e) 
-		{
-			e.printStackTrace();
+			RequestDispatcher rd = request.getRequestDispatcher("/login");
+			rd.forward(request,  response);
 		}
 	}
 }

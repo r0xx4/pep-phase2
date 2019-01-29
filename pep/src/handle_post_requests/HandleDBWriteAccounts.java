@@ -6,11 +6,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import data_management.Driver;
 
@@ -44,66 +46,84 @@ public class HandleDBWriteAccounts extends HttpServlet {
 		{
 			push_into_db.put(key, request.getParameterMap().get(key)[0]);
 		}
+		
 		String mail = push_into_db.get("accountname_ID");
 		String team = push_into_db.get("team");
 		
 		Driver datenhaltung = new Driver();
-		
-		try 
+		HttpSession session = request.getSession();
+		String session_ID = (String)(session.getAttribute("session_id"));
+		if (session_ID != null)
 		{
-			if (!team.equals("null"))
+			try
 			{
-				team = team.replaceAll("Team ", "");
-				StringBuilder team_sb = new StringBuilder(team);
-				team_sb.delete(1, team_sb.length());
-				team = team_sb.toString();
-				String teamname_ID = datenhaltung.getSubCat("team", "teamnummer", team, "teamname_ID").get(0).get("teamname_ID");
-				ArrayList<HashMap<String, String>> teammapname_ID_list = datenhaltung.getSubCat("teammap", "accountname_ID", push_into_db.get("accountname_ID"), "teammapname_ID");
-				
-				String teammapname_ID = "";
-				if (!teammapname_ID_list.isEmpty())
-					teammapname_ID = teammapname_ID_list.get(0).get("teammapname_ID");
-				else
-					teammapname_ID = null;
-				
-				HashMap<String, String> teammap_row = new HashMap<>();
-				teammap_row.put("accountname_ID", push_into_db.get("accountname_ID"));
-				teammap_row.put("teamname_ID", teamname_ID);
-				if (teammapname_ID != null)
+				String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
+				String rolle = datenhaltung.getSubCat("account", accountname_ID).get(0).get("rollename_ID");
+				if (rolle.equals("Admin"))
 				{
-					datenhaltung.updateTable("teammap", teammapname_ID, teammap_row);
+					if (!team.equals("null"))
+					{
+						team = team.replaceAll("Team ", "");
+						StringBuilder team_sb = new StringBuilder(team);
+						team_sb.delete(1, team_sb.length());
+						team = team_sb.toString();
+						String teamname_ID = datenhaltung.getSubCat("team", "teamnummer", team, "teamname_ID").get(0).get("teamname_ID");
+						ArrayList<HashMap<String, String>> teammapname_ID_list = datenhaltung.getSubCat("teammap", "accountname_ID", push_into_db.get("accountname_ID"), "teammapname_ID");
+						
+						String teammapname_ID = "";
+						if (!teammapname_ID_list.isEmpty())
+							teammapname_ID = teammapname_ID_list.get(0).get("teammapname_ID");
+						else
+							teammapname_ID = null;
+						
+						HashMap<String, String> teammap_row = new HashMap<>();
+						teammap_row.put("accountname_ID", push_into_db.get("accountname_ID"));
+						teammap_row.put("teamname_ID", teamname_ID);
+						if (teammapname_ID != null)
+						{
+							datenhaltung.updateTable("teammap", teammapname_ID, teammap_row);
+						}
+						else
+						{
+							datenhaltung.insertHashMap("teammap", teammap_row);
+						}
+						push_into_db.remove("accountname_ID");
+						push_into_db.remove("team");
+						datenhaltung.updateTable("account", mail, push_into_db);
+					}
+					else
+					{
+						ArrayList<HashMap<String, String>> teammapname_ID_del_list = datenhaltung.getSubCat("teammap", "accountname_ID", push_into_db.get("accountname_ID"), "teammapname_ID");
+						if (!teammapname_ID_del_list.isEmpty() && teammapname_ID_del_list.size() < 2)
+						{
+							String teammapname_ID_del = teammapname_ID_del_list.get(0).get("teammapname_ID");
+							datenhaltung.deleteRow("teammap", teammapname_ID_del);
+						}
+						push_into_db.remove("accountname_ID");
+						push_into_db.remove("team");
+						datenhaltung.updateTable("account", mail, push_into_db);
+					}	
+					PrintWriter out = response.getWriter();
+					out.println("<script>");
+					out.println("window.open(\"/pep/home/show_accounts\", \"_self\")");
+					out.println("</script>");
+					out.close();
 				}
 				else
 				{
-					datenhaltung.insertHashMap("teammap", teammap_row);
+					RequestDispatcher rd = request.getRequestDispatcher("/login");
+					rd.forward(request,  response);
 				}
-				push_into_db.remove("accountname_ID");
-				push_into_db.remove("team");
-				datenhaltung.updateTable("account", mail, push_into_db);
 			}
-			else
+			catch (SQLException e)
 			{
-				ArrayList<HashMap<String, String>> teammapname_ID_del_list = datenhaltung.getSubCat("teammap", "accountname_ID", push_into_db.get("accountname_ID"), "teammapname_ID");
-				if (!teammapname_ID_del_list.isEmpty() && teammapname_ID_del_list.size() < 2)
-				{
-					String teammapname_ID_del = teammapname_ID_del_list.get(0).get("teammapname_ID");
-					datenhaltung.deleteRow("teammap", teammapname_ID_del);
-				}
-				push_into_db.remove("accountname_ID");
-				push_into_db.remove("team");
-				datenhaltung.updateTable("account", mail, push_into_db);
-			}	
-		} 
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
+				e.printStackTrace();
+			}
 		}
-		
-		PrintWriter out = response.getWriter();
-		out.println("<script>");
-		out.println("window.open(\"/pep/home/show_accounts\", \"_self\")");
-		out.println("</script>");
-		out.close();
+		else
+		{
+			RequestDispatcher rd = request.getRequestDispatcher("/login");
+			rd.forward(request,  response);
+		}
 	}
-
 }

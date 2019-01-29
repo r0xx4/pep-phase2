@@ -7,11 +7,13 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import data_management.Driver;
 
@@ -49,28 +51,42 @@ public class HandleDBWritePersonalInfo extends HttpServlet {
 		}
 
 		Driver datenhaltung = new Driver();
-		String accountname_ID = push_into_db.get("accountname_ID");
-		push_into_db.remove("accountname_ID");
-		
-		try {
-			if (push_into_db.containsKey("password_old")) {
-				String password_Old = Driver.getHash(push_into_db.get("password_old").getBytes(StandardCharsets.UTF_8));
-				String DB_Pw = datenhaltung.getSubCat("account", accountname_ID).get(0).get("password");
-				push_into_db.replace("password", Driver.getHash(push_into_db.get("password").getBytes(StandardCharsets.UTF_8)));
-				if (!password_Old.equals(DB_Pw)) {
-					push_into_db.remove("password_old");
-					push_into_db.remove("password");
-				} else 
-					push_into_db.remove("password_old");
+		HttpSession session = request.getSession();
+		String session_ID = (String)(session.getAttribute("session_id"));
+		if (session_ID != null)
+		{
+			try
+			{
+				String accountname_ID = push_into_db.get("accountname_ID");
+				push_into_db.remove("accountname_ID");
+				
+				if (push_into_db.containsKey("password_old")) {
+					String password_Old = Driver.getHash(push_into_db.get("password_old").getBytes(StandardCharsets.UTF_8));
+					String DB_Pw = datenhaltung.getSubCat("account", accountname_ID).get(0).get("password");
+					push_into_db.replace("password", Driver.getHash(push_into_db.get("password").getBytes(StandardCharsets.UTF_8)));
+					if (!password_Old.equals(DB_Pw)) {
+						push_into_db.remove("password_old");
+						push_into_db.remove("password");
+					} else 
+						push_into_db.remove("password_old");
+				}
+				datenhaltung.updateTable("account", accountname_ID, push_into_db);
+				
+				PrintWriter out = response.getWriter();
+				out.println("<script>");
+				out.println("window.open(\"/pep/home/view_personal_info\", \"_self\")");
+				out.println("</script>");
+				out.close();
 			}
-			datenhaltung.updateTable("account", accountname_ID, push_into_db);
-		} catch (NoSuchAlgorithmException | SQLException e) {
-			e.printStackTrace();
+			catch (SQLException | NoSuchAlgorithmException e)
+			{
+				e.printStackTrace();
+			}
 		}
-		PrintWriter out = response.getWriter();
-		out.println("<script>");
-		out.println("window.open(\"/pep/home/view_personal_info\", \"_self\")");
-		out.println("</script>");
-		out.close();
+		else
+		{
+			RequestDispatcher rd = request.getRequestDispatcher("/login");
+			rd.forward(request,  response);
+		}
 	}
 }
