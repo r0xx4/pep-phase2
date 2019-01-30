@@ -39,8 +39,8 @@ public class ActivationMail extends HttpServlet {
 		
 		Driver datenhaltung = new Driver();
 		try {
-		String querry = request.getQueryString();
-		
+			
+		String query = request.getQueryString();
 		String id=query.split("&")[0].split("=")[1];
 		String pw=query.split("&")[1].split("=")[1];
 		
