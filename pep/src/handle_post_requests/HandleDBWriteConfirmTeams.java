@@ -81,7 +81,7 @@ public class HandleDBWriteConfirmTeams extends HttpServlet {
 						if(hits_in_tempteammap.get(i).get("tempteamname_ID").equals(push_into_db.get("tempteamname_ID"))) {
 							ArrayList<HashMap<String, String>> teammitglied = datenhaltung.getSubCat("account", "accountname_ID", hits_in_tempteammap.get(i).get("accountname_ID"));
 			                ArrayList<HashMap<String, String>> teammap_hits = datenhaltung.getSubCat("teammap", "accountname_ID", hits_in_tempteammap.get(i).get("accountname_ID"), "teamname_ID");
-			                if(!teammitglied.isEmpty() && teammitglied.get(0).get("rollename_ID").equals("Teilnehmer") && teammap_hits.isEmpty() && !teamData.get(0).get("antragsteller").equals(hits_in_tempteammap.get(i).get("accountname_ID"))){
+			                if(!teammitglied.isEmpty() && teammitglied.get(0).get("rollename_ID").equals("Teilnehmer") && teammitglied.get(0).get("activated").equals("1") && teammap_hits.isEmpty() && !teamData.get(0).get("antragsteller").equals(hits_in_tempteammap.get(i).get("accountname_ID"))){
 			                	HashMap<String, String> insert = new HashMap<>();
 			                	insert.put("accountname_ID", hits_in_tempteammap.get(i).get("accountname_ID"));
 			                	insert.put("teamname_ID", kennnummer);
@@ -93,11 +93,14 @@ public class HandleDBWriteConfirmTeams extends HttpServlet {
 					}
 					
 					//Antragsteller in teammap kopieren und zum Teamvorsitzenden befördern
-					HashMap<String, String> insert = new HashMap<>();
-		        	insert.put("accountname_ID", teamData.get(0).get("antragsteller"));
-		        	insert.put("teamname_ID", kennnummer);
-		        	datenhaltung.insertHashMap("teammap", insert);
-		        	datenhaltung.setTeamLeader(teamData.get(0).get("antragsteller"));
+					ArrayList<HashMap<String, String>> teammap_hits = datenhaltung.getSubCat("teammap", "accountname_ID", teamData.get(0).get("antragsteller"), "teamname_ID");
+	                if(teammap_hits.isEmpty()){
+	                	HashMap<String, String> insert = new HashMap<>();
+			        	insert.put("accountname_ID", teamData.get(0).get("antragsteller"));
+			        	insert.put("teamname_ID", kennnummer);
+			        	datenhaltung.insertHashMap("teammap", insert);
+			        	datenhaltung.setTeamLeader(teamData.get(0).get("antragsteller"));
+	                }
 				
 		        	//tempteam Eintrag in DB löschen
 		        	datenhaltung.deleteRow("tempteam", "tempteamname_ID", push_into_db.get("tempteamname_ID"));

@@ -288,10 +288,10 @@
 	                String teammitglieder = "";
 	                for(int i=0; i<accounts_in_tempteam.size(); i++){
 						teammitglieder = teammitglieder + accounts_in_tempteam.get(i).get("accountname_ID");	
-						ArrayList<HashMap<String, String>> teammitglid = datenhaltung.getSubCat("account", "accountname_ID", accounts_in_tempteam.get(i).get("accountname_ID"), "rollename_ID");
+						ArrayList<HashMap<String, String>> teammitglid = datenhaltung.getSubCat("account", "accountname_ID", accounts_in_tempteam.get(i).get("accountname_ID"));
 						ArrayList<HashMap<String, String>> teammap_hits = datenhaltung.getSubCat("teammap", "accountname_ID", accounts_in_tempteam.get(i).get("accountname_ID"), "teamname_ID");
 						
-						if(!teammitglid.isEmpty() && teammitglid.get(0).get("rollename_ID").equals("Teilnehmer") && teammap_hits.isEmpty() && !html_contents.get(x).get("antragsteller").equals(accounts_in_tempteam.get(i).get("accountname_ID"))){
+						if(!teammitglid.isEmpty() && teammitglid.get(0).get("rollename_ID").equals("Teilnehmer") && teammitglid.get(0).get("activated").equals("1") && teammap_hits.isEmpty() && !html_contents.get(x).get("antragsteller").equals(accounts_in_tempteam.get(i).get("accountname_ID"))){
 							teammitglieder = teammitglieder + " <i class=\\\"far fa-check-circle fa-1x\\\" style=\\\"color:green\\\"></i></br>";
 						}
 						else if(teammitglid.isEmpty()){
@@ -299,6 +299,9 @@
 						}
 						else if(!teammitglid.get(0).get("rollename_ID").equals("Teilnehmer")){
 							teammitglieder = teammitglieder + " <i class=\\\"far fa-times-circle\\\" style=\\\"color:red\\\" data-toggle=\\\"tooltip\\\" data-placement=\\\"top\\\" title=\\\"Kein Teilnehmer Account\\\"></i></br>";
+						}
+						else if(!teammitglid.get(0).get("activated").equals("1")){
+							teammitglieder = teammitglieder + " <i class=\\\"far fa-times-circle\\\" style=\\\"color:red\\\" data-toggle=\\\"tooltip\\\" data-placement=\\\"top\\\" title=\\\"Account noch nicht aktiviert\\\"></i></br>";
 						}
 						else if(!teammap_hits.isEmpty()){
 							teammitglieder = teammitglieder + " <i class=\\\"far fa-times-circle\\\" style=\\\"color:red\\\" data-toggle=\\\"tooltip\\\" data-placement=\\\"top\\\" title=\\\"Teilnehmer bereits in anderem Team\\\"></i></br>";
