@@ -1,5 +1,6 @@
 package data_management;
 
+import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -30,7 +31,7 @@ public class Driver {
 	private static final byte salt[] = DatatypeConverter.parseHexBinary("DE358A58A8769EB4A370A7EE9EC54CDE76CE64C2");
 	private static final byte aes[] = "Tb7pfVzbxd1SLIN4".getBytes();
 	private ArrayList<String> persData = new ArrayList<>();
-	
+
 	public Driver() {
 		persData.add("accountname_ID");
 		persData.add("accountname_ID_Bericht");
@@ -46,6 +47,27 @@ public class Driver {
 		persData.add("rollename_ID");
 		persData.add("studiengangname_ID");
 		persData.add("lehrstuhlname_ID");
+	}
+
+	public static void main(String[] args) throws IOException, InterruptedException {
+		Driver d = new Driver();
+		System.out.println(d.backupDatabase());
+	}
+
+	public boolean backupDatabase() throws IOException, InterruptedException {
+		String dbName = "pep_2018_sose_1";
+		String dbUser = "pep";
+		String dbPass = "XO47mVNIr1qNrECj";
+		String dbPath = "C:\\xampp\\mysql\\bin\\mysqldump.exe";
+
+		String executeCmd = dbPath + " -u " + dbUser + " -p" + dbPass + " " + dbName
+				+ " -r C:\\Users\\Ivan\\Desktop\\Uni\\backup.sql";
+		Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
+		int processComplete = runtimeProcess.waitFor();
+		if (processComplete == 0)
+			return true;
+		else
+			return false;
 	}
 
 	// Methode getTutorTeams
@@ -456,7 +478,7 @@ public class Driver {
 					for (i = 1; i <= r; i++) {
 						String column = resultSetMetaData.getColumnLabel(i);
 						String data = result.getString(i);
-						if (persData.contains(column) && data!=null)
+						if (persData.contains(column) && data != null)
 							hashMap.put(column, decryptData(data));
 						else
 							hashMap.put(column, data);
@@ -474,7 +496,7 @@ public class Driver {
 		try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			int i = 1;
 			for (String key : keys)
-				if (persData.contains(key) && hashMap.get(key)!=null)
+				if (persData.contains(key) && hashMap.get(key) != null)
 					stmt.setString(i++, encryptData(hashMap.get(key)));
 				else
 					stmt.setString(i++, hashMap.get(key));
