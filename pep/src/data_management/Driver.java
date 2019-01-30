@@ -58,10 +58,10 @@ public class Driver {
 		String dbName = "pep_2018_sose_1";
 		String dbUser = "pep";
 		String dbPass = "XO47mVNIr1qNrECj";
-		String dbPath = "C:\\xampp\\mysql\\bin\\mysqldump.exe";
+		String dbPathIn = "C:\\xampp\\mysql\\bin\\mysqldump.exe";
+		String dbPathOut = "C:\\Backup\\backup.sql";
 
-		String executeCmd = dbPath + " -u " + dbUser + " -p" + dbPass + " " + dbName
-				+ " -r C:\\Users\\Ivan\\Desktop\\Uni\\backup.sql";
+		String executeCmd = dbPathIn + " -u " + dbUser + " -p" + dbPass + " " + dbName + " -r " + dbPathOut;
 		Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
 		int processComplete = runtimeProcess.waitFor();
 		if (processComplete == 0)
