@@ -1,5 +1,6 @@
 <%@page import="org.w3c.dom.html.HTMLCollection"%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" import="java.util.*, data_management.Driver" %>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" import="java.util.*, data_management.Driver, java.nio.file.Files,
+    java.nio.file.Path, java.nio.file.Paths" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -267,10 +268,10 @@
                             <div class="form-group row">
                                 <label class="col-form-label col-sm-4"><strong>Dokumente:</strong></label>
                                 <div class="col-sm-8">
-                                    <label><a id="link_download_documentation" href="#">Bericht/Dokumentation</a></label></br>
-                                    <label><a id="link_download_presentation" href="#">Projekt Präsentation</a></label><br>
-                                    <label><a id="link_download_poster" href="#">Poster</a></label><br>
-                                    <label><a id="link_download_summary" href="#">Einseitige Zusammenfassung</a></label><br>                                  
+                                    <label><a id="link_download_documentation">Bericht/Dokumentation</a></label></br>
+                                    <label><a id="link_download_presentation">Projekt Präsentation</a></label><br>
+                                    <label><a id="link_download_poster">Poster</a></label><br>
+                                    <label><a id="link_download_summary">Einseitige Zusammenfassung</a></label><br>                                  
                                 </div>   
                             </div>
                         </form>
@@ -524,10 +525,32 @@
 	                }
 	                %>
 	                document.querySelector('#lbl_team_member').innerHTML = "<% out.print(teammitglieder); %>";
+	                <%
+                    Path pathBericht = Paths.get("c:/data" + html_contents.get(x).get("projektpfad") + "/Bericht.pdf");
+	                if(Files.exists(pathBericht)){
+	                %>
 	                document.querySelector('#link_download_documentation').href="/pep/provide_project_file_download?filetype=documentation&team=<% out.print(html_contents.get(x).get("teamname_ID")); %>";
+	                <%
+	                }
+                    Path pathPraesentation = Paths.get("c:/data" + html_contents.get(x).get("projektpfad") + "/Praesentation.pdf");
+                    if(Files.exists(pathPraesentation)){
+	                %>
 	                document.querySelector('#link_download_presentation').href="/pep/provide_project_file_download?filetype=presentation&team=<% out.print(html_contents.get(x).get("teamname_ID")); %>";
+	                <%
+                    }
+                    Path pathPoster = Paths.get("c:/data" + html_contents.get(x).get("projektpfad") + "/Poster.pdf");
+                    if(Files.exists(pathPoster)){
+                    %>
 	                document.querySelector('#link_download_poster').href="/pep/provide_project_file_download?filetype=poster&team=<% out.print(html_contents.get(x).get("teamname_ID")); %>";
+	                <%
+                    }
+                    Path pathZusammenfassung = Paths.get("c:/data" + html_contents.get(x).get("projektpfad") + "/Zusammenfassung.pdf");
+                    if(Files.exists(pathZusammenfassung)){
+                    %>
 	                document.querySelector('#link_download_summary').href="/pep/provide_project_file_download?filetype=summary&team=<% out.print(html_contents.get(x).get("teamname_ID")); %>";
+	                <%
+                    }
+                    %>
 				})
 	            
 				<%
