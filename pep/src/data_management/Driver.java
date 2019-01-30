@@ -1,5 +1,6 @@
 package data_management;
 
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -8,72 +9,132 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
+import sun.misc.BASE64Encoder;
 
 public class Driver {
 
 	private static final byte salt[] = DatatypeConverter.parseHexBinary("DE358A58A8769EB4A370A7EE9EC54CDE76CE64C2");
-
+	private static final byte aes[] = "Tb7pfVzbxd1SLIN4".getBytes();
+	private ArrayList<String> persData = new ArrayList<>();
 	
-	//Methode getTutorTeams
-	public ArrayList<HashMap<String,String>> getTutorTeams(String user) throws SQLException{
-		StringBuilder sql=new StringBuilder("SELECT team.* FROM team ");
-		sql.append("INNER JOIN teammap ON team.teamname_ID=teammap.teamname_ID ");
-		sql.append("WHERE teammap.accountname_ID LIKE '");
-		sql.append(user);
-		sql.append("';");
-
-		return returnArrayList(sql.toString());
+	public Driver() {
+		persData.add("accountname_ID");
+		persData.add("accountname_ID_Bericht");
+		persData.add("accountname_ID_Praesentation");
+		persData.add("accountname_ID_Poster");
+		persData.add("accountname_ID_Zusammenfassung");
+		persData.add("vorname");
+		persData.add("nachname");
+		persData.add("matrikelnummer");
+		persData.add("antragsteller");
+		persData.add("betreuer1");
+		persData.add("betreuer2");
+		persData.add("rollename_ID");
+		persData.add("studiengangname_ID");
+		persData.add("lehrstuhlname_ID");
 	}
+
+	// Methode getTutorTeams
+	public ArrayList<HashMap<String, String>> getTutorTeams(String user) throws SQLException {
+		StringBuilder sql = new StringBuilder("SELECT team.* FROM team ");
+		sql.append("INNER JOIN teammap ON team.teamname_ID=teammap.teamname_ID ");
+		sql.append("WHERE teammap.accountname_ID LIKE ?;");
+
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		Set<String> k = h.keySet();
+		h.put("accountname_ID", user);
+		return returnArrayList(sql.toString(), h, k);
+	}
+
+	public boolean activateAccount(int anonymeID) throws SQLException {
+		String s = String.valueOf(anonymeID);
+		String sql = "SELECT anonyme_ID FROM account WHERE anonyme_ID LIKE ? ;";
+		HashMap<String, String> h = new HashMap<>();
+		h.put("anonyme_ID", s);
+		Set<String> k = h.keySet();
+		ArrayList<HashMap<String, String>> a = returnArrayList(sql, h, k);
+		if (a == null || a.isEmpty())
+			return false;
+		else if (a.get(0).get("anonyme_ID").equals(s)) {
+			sql = "UPDATE account SET activated=1 WHERE anonyme_ID= ? ;";
+			LinkedHashMap<String, String> hashMap = new LinkedHashMap<>();
+			hashMap.put("anonyme_ID", s);
+			Set<String> set = hashMap.keySet();
+			executeUpdate(sql, hashMap, set);
+			return true;
+		} else
+			return false;
+	}
+
 	// Method createTeam
 	public String createTeam(String lehrstuhl, String projekttitel, String organisationseinheit, String betreuer1,
 			String betreuer2) throws SQLException {
 
-		System.out.println(lehrstuhl);
 		String kennnummer = generateKennnummer(lehrstuhl);
-		String sql = "Insert Into team (teamname_ID,teamnummer,projekttitel,projektpfad,organisationseinheitname_ID) Values('"
-				+ kennnummer + "','" + kennnummer.substring(2, 4) + "','" + projekttitel + "','" + "/" + kennnummer
-				+ "','" + organisationseinheit + "')";
-		
-		executeUpdate(sql);
 
-		HashMap<String, String> teammap_row = new HashMap<>();
-		teammap_row.put("accountname_ID", betreuer1);
-		teammap_row.put("teamname_ID", kennnummer);
-		this.insertHashMap("teammap", teammap_row);
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("teamname_ID", kennnummer);
+		h.put("teamnummer", kennnummer.substring(2, 4));
+		h.put("projekttitel", projekttitel);
+		h.put("projektpfad", "/" + kennnummer);
+		h.put("organisationseinheitname_ID", organisationseinheit);
+		insertHashMap("team", h);
 
-		HashMap<String, String> teammap_row2 = new HashMap<>();
-		teammap_row2.put("accountname_ID", betreuer2);
-		teammap_row2.put("teamname_ID", kennnummer);
-		this.insertHashMap("teammap", teammap_row2);
+		h = new LinkedHashMap<>();
+		h.put("accountname_ID", betreuer1);
+		h.put("teamname_ID", kennnummer);
+		insertHashMap("teammap", h);
+
+		h = new LinkedHashMap<>();
+		h.put("accountname_ID", betreuer2);
+		h.put("teamname_ID", kennnummer);
+		insertHashMap("teammap", h);
 
 		return kennnummer;
 	}
-	
-	//Method createTeamRequest
-	public boolean createTeamRequest(String betreuer1, String betreuer2, String projekttitel, String teamvorsitzender, 
-			ArrayList<String> teammitglieder)throws SQLException {
-		
-		LocalDate localDate = LocalDate.now();
-		String sql = "INSERT INTO `tempteam`( `datum`, `antragsteller`, `betreuer1`, `betreuer2`, `projekttitel`) VALUES ('"
-				+ localDate +"','"+ teamvorsitzender + "','" + betreuer1 + "','" + betreuer2 + "','" + projekttitel + "')";
 
-		if(!executeUpdate(sql))
+	public boolean deleteTabelContent(String table) throws SQLException {
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		Set<String> k = h.keySet();
+		StringBuilder sql = new StringBuilder("DELETE FROM ");
+		sql.append(table);
+		sql.append(";");
+		return executeUpdate(sql.toString(), h, k);
+	}
+
+	// Method createTeamRequest
+	public boolean createTeamRequest(String betreuer1, String betreuer2, String projekttitel, String teamvorsitzender,
+			ArrayList<String> teammitglieder) throws SQLException {
+
+		LocalDate localDate = LocalDate.now();
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("datum", localDate.toString());
+		h.put("antragsteller", teamvorsitzender);
+		h.put("betreuer1", betreuer1);
+		h.put("betreuer2", betreuer2);
+		h.put("projekttitel", projekttitel);
+
+		if (!insertHashMap("tempteam", h))
 			return false;
-		
-		String s=getSubCat("tempteam", "antragsteller", teamvorsitzender, "tempteamname_ID").get(0).get("tempteamname_ID");
-		
-		HashMap<String, String> h;
-		for(String str:teammitglieder) {
-			h = new HashMap();
+		String s = getSubCat("tempteam", "antragsteller", teamvorsitzender, "tempteamname_ID").get(0)
+				.get("tempteamname_ID");
+
+		for (String str : teammitglieder) {
+			h = new LinkedHashMap<>();
 			h.put("accountname_ID", str);
 			h.put("tempteamname_ID", s);
 			insertHashMap("tempteammap", h);
@@ -83,15 +144,23 @@ public class Driver {
 
 	// Method setTeamLeader
 	public boolean setTeamLeader(String mail) throws SQLException {
-		String sql = "UPDATE account SET rollename_ID='Teamleiter' Where accountname_ID Like '" + mail + "'";
-		return executeUpdate(sql);
+		String sql = "UPDATE account SET rollename_ID='Teamleiter' Where accountname_ID Like ? ;";
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("accountname_ID", mail);
+		Set<String> k = h.keySet();
+		return executeUpdate(sql, h, k);
 	}
 
 	// Method setPhaseDates
 	public boolean setPhaseDates(String phasenName, String startDate, String endDate) throws SQLException {
-		String sql = "UPDATE phase SET startDatum='" + startDate + "', endDatum='" + endDate + "' "
-				+ "Where phasename_ID Like '" + phasenName + "'";
-		return executeUpdate(sql);
+		String sql = "UPDATE phase SET startDatum = ? , endDatum = ? Where phasename_ID Like ? ;";
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("startDatum", startDate);
+		h.put("endDatum", endDate);
+		h.put("phasenname_ID", phasenName);
+		Set<String> k = h.keySet();
+
+		return executeUpdate(sql, h, k);
 	}
 
 	public boolean updateTable(String table, String iDV, HashMap<String, String> hashMap) throws SQLException {
@@ -100,62 +169,55 @@ public class Driver {
 		sql.append(table);
 		sql.append(" SET ");
 		for (String s : keys)
-			if (!hashMap.get(s).equals("null"))
-				sql.append(s + " = '" + hashMap.get(s) + "' ,");
-			else
-				sql.append(s + " = " + hashMap.get(s) + " ,");
+			sql.append(s + " = ? ,");
+
 		sql.setLength(sql.length() - 1);
+
+		String temp = table + "name_ID";
+		hashMap.put(temp, iDV);
+		keys = hashMap.keySet();
 		sql.append("WHERE ");
 		sql.append(table);
-		sql.append("name_ID LIKE '");
-		sql.append(iDV);
-		sql.append("';");
-		return executeUpdate(sql.toString());
-		/*
-		 * sql.append(s+" = ? ,");
-		 * 
-		 * sql.setLength(sql.length()-1); sql.append("WHERE "); sql.append(table);
-		 * sql.append("name_ID LIKE "); sql.append(iDV); sql.append(";"); return
-		 * executeUpdate(sql.toString(), hashMap, keys);
-		 */
+		sql.append("name_ID LIKE ? ;");
+
+		return executeUpdate(sql.toString(), hashMap, keys);
 	}
 
 	public String getSessionUser(String session_id) throws SQLException {
-		StringBuilder sql = new StringBuilder("SELECT accountname_ID FROM sessionmap WHERE sessionmapname_ID = ");
-		sql.append(session_id);
-		sql.append(" ;");
-		if (returnArrayList(sql.toString()).isEmpty())
+		String sql = "SELECT accountname_ID FROM sessionmap WHERE sessionmapname_ID = ? ;";
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("sessionmapname_ID", session_id);
+		Set<String> k = h.keySet();
+		ArrayList<HashMap<String, String>> a = returnArrayList(sql, h, k);
+		if (a.isEmpty())
 			return null;
-		return returnArrayList(sql.toString()).get(0).get("accountname_ID");
+		return a.get(0).get("accountname_ID");
 	}
 
 	public boolean deleteRow(String table, String iDV) throws SQLException {
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put(table + "name_ID", iDV);
+		Set<String> k = h.keySet();
 		StringBuilder sql = new StringBuilder("DELETE FROM ");
 		sql.append(table);
 		sql.append(" WHERE ");
 		sql.append(table);
-		sql.append("name_ID LIKE '");
-		sql.append(iDV);
-		sql.append("';");
-		return executeUpdate(sql.toString());
+		sql.append("name_ID LIKE ?");
+
+		return executeUpdate(sql.toString(), h, k);
 	}
 
 	public boolean deleteRow(String table, String iDA, String iDV) throws SQLException {
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put(iDA, iDV);
+		Set<String> k = h.keySet();
 		StringBuilder sql = new StringBuilder("DELETE FROM ");
 		sql.append(table);
 		sql.append(" WHERE ");
 		sql.append(iDA);
-		sql.append(" LIKE '");
-		sql.append(iDV);
-		sql.append("';");
-		return executeUpdate(sql.toString());
-	}
-	
-	public boolean deleteTabelContent(String table) throws SQLException {
-		StringBuilder sql = new StringBuilder("DELETE FROM ");
-		sql.append(table);
-		sql.append(";");
-		return executeUpdate(sql.toString());
+		sql.append(" LIKE ? ;");
+
+		return executeUpdate(sql.toString(), h, k);
 	}
 
 	public boolean insertHashMap(String table, HashMap<String, String> hashMap) throws SQLException {
@@ -172,55 +234,45 @@ public class Driver {
 		return executeUpdate(sql.toString(), hashMap, keys);
 	}
 
-	// Method getMasterPassword
-
 	public String getMasterPassword(String role) throws SQLException {
+		HashMap<String, String> h = new HashMap<>();
+		Set<String> k = h.keySet();
 		if (role.equals("Juror"))
-			return returnArrayList("Select masterpasswordJuror From projectconfiguration").get(0)
+			return returnArrayList("Select masterpasswordJuror From projectconfiguration", h, k).get(0)
 					.get("masterpasswordJuror");
 		else if (role.equals("Tutor"))
-			return returnArrayList("Select masterpasswordTutor From projectconfiguration").get(0)
+			return returnArrayList("Select masterpasswordTutor From projectconfiguration", h, k).get(0)
 					.get("masterpasswordTutor");
 		else
 			return null;
 	}
-	
-	//Method activateAccount
-	public boolean activateAccount(int anonymeID) throws SQLException {
-        String s=String.valueOf(anonymeID);
-        String sql="SELECT anonyme_ID FROM account WHERE anonyme_ID LIKE ? ;";
-        HashMap <String,String> h=new HashMap<>();
-        h.put("anonyme_ID", s);
-        Set<String> k = h.keySet();
-        ArrayList<HashMap<String,String>> a=returnArrayList(sql, h, k);
-        if(a==null||a.isEmpty())
-            return false;
-        else if(a.get(0).get("anonyme_ID").equals(s)) {
-            sql="UPDATE account SET activated=1 WHERE anonyme_ID='"+s+"';";
-            executeUpdate(sql);
-            return true;
-        }
-        else
-            return false;
-    }
 
 	// Method logout
 	public boolean logout(int sessionID) throws SQLException {
-		String sql = "Delete From sessionmap Where sessionmapname_ID=" + sessionID;
-		return executeUpdate(sql);
+		String sql = "Delete From sessionmap Where sessionmapname_ID= ? ;";
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("sessionmapname_ID", String.valueOf(sessionID));
+		Set<String> k = h.keySet();
+		return executeUpdate(sql, h, k);
 	}
 
 	// Method login
 	public String login(String mail, String password) throws SQLException {
-		String sql = "Select activated From account Where accountname_ID Like '" + mail + "' And password Like '"
-				+ password + "'";
-		ArrayList<HashMap<String, String>> a = returnArrayList(sql);
-		if (a.isEmpty()/* ||!Boolean.parseBoolean(a.get(0).get("activated")) */)
+		String sql = "Select activated From account Where accountname_ID Like ? And password Like ? ;";
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("accountname_ID", mail);
+		h.put("password", password);
+		Set<String> k = h.keySet();
+		ArrayList<HashMap<String, String>> a = returnArrayList(sql, h, k);
+		if (a == null || a.isEmpty()/* ||!Boolean.parseBoolean(a.get(0).get("activated")) */)
 			return null;
-		sql = "Insert Into sessionmap (accountname_ID) Values('" + mail + "')";
-		executeUpdate(sql);
-		sql = "Select sessionmapname_ID From sessionmap Where accountname_ID Like '" + mail + "'";
-		return returnArrayList(sql).get(0).get("sessionmapname_ID");
+		sql = "Insert Into sessionmap (accountname_ID) Values(?) ;";
+		h = new LinkedHashMap<>();
+		h.put("accountname_ID", mail);
+		k = h.keySet();
+		executeUpdate(sql, h, k);
+		sql = "Select sessionmapname_ID From sessionmap Where accountname_ID Like ? ;";
+		return returnArrayList(sql, h, k).get(0).get("sessionmapname_ID");
 
 	}
 
@@ -229,139 +281,143 @@ public class Driver {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select rolle.accessMarks,rolle.manageProject,rolle.seeAllGroupInformation,rolle.setupGroup ");
 		sql.append("From sessionmap Inner Join account on sessionmap.accountname_ID = account.accountname_ID ");
-		sql.append("Inner Join rolle on account.rollename_ID=rolle.rollename_ID Where sessionmapname_ID=");
-		sql.append(sessionID);
-		return returnArrayList(sql.toString()).get(0);
+		sql.append("Inner Join rolle on account.rollename_ID=rolle.rollename_ID Where sessionmapname_ID= ? ;");
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("sessionmapname_ID", String.valueOf(sessionID));
+		Set<String> k = h.keySet();
+		return returnArrayList(sql.toString(), h, k).get(0);
 	}
 
 	// Method getSubCat
 	public ArrayList<HashMap<String, String>> getSubCat(String table, String iDA, String iDV, String column)
 			throws SQLException {
-		String sql = "Select " + column + " From " + table + " Where " + iDA + " Like '" + iDV + "'";
-		return returnArrayList(sql);
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put(iDA, iDV);
+		Set<String> k = h.keySet();
+		String sql = "Select " + column + " From " + table + " Where " + iDA + " Like ? ;";
+		return returnArrayList(sql, h, k);
 	}
 
 	public ArrayList<HashMap<String, String>> getSubCat(String table, String iDA, String iDV) throws SQLException {
-		String sql = "Select * From " + table + " Where " + iDA + " Like '" + iDV + "'";
-		return returnArrayList(sql);
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put(iDA, iDV);
+		Set<String> k = h.keySet();
+		String sql = "Select * From " + table + " Where " + iDA + " Like ? ;";
+		return returnArrayList(sql, h, k);
 	}
 
 	public ArrayList<HashMap<String, String>> getSubCat(String table, String iD) throws SQLException {
-		String sql = "Select * From " + table + " Where " + table + "name_ID Like '" + iD + "'";
-		return returnArrayList(sql);
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put(table + "name_ID", iD);
+		Set<String> k = h.keySet();
+		String sql = "Select * From " + table + " Where " + table + "name_ID Like ? ;";
+		return returnArrayList(sql, h, k);
 	}
 
 	public ArrayList<HashMap<String, String>> getSubCat(String table) throws SQLException {
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		Set<String> k = h.keySet();
 		String sql = "Select * From " + table + " Where 1";
-		return returnArrayList(sql);
+		return returnArrayList(sql, h, k);
 	}
 
 	// Method get
 
 	public ArrayList<HashMap<String, String>> getScoreForCriterion(String teamname, String teilkriterium)
 			throws SQLException {
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("teamname_ID", teamname);
+		h.put("teilkriteriumname_ID", teilkriterium);
+		Set<String> k = h.keySet();
 		StringBuilder sql = new StringBuilder("SELECT * ");
 		sql.append("FROM kriteriumsmap ");
-		sql.append("WHERE kriteriumsmap.teamname_ID LIKE '");
-		sql.append(teamname);
-		sql.append("' AND kriteriumsmap.teilkriteriumname_ID = '");
-		sql.append(teilkriterium);
-		sql.append("';");
-		return returnArrayList(sql.toString());
+		sql.append("WHERE kriteriumsmap.teamname_ID LIKE ?");
+		sql.append(" AND kriteriumsmap.teilkriteriumname_ID = ? ;");
+
+		return returnArrayList(sql.toString(), h, k);
 
 	}
 
 	// Method getAccountsInGroup
 	public ArrayList<HashMap<String, String>> getAccountsInGroup(String group) throws SQLException {
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("organisationseinheitname_ID", group);
+		h.put("organisationseinheitname_ID2", group);
+		Set<String> k = h.keySet();
 		StringBuilder sql = new StringBuilder("SELECT account.accountname_ID FROM account  ");
 		sql.append("INNER JOIN teammap ON account.accountname_ID=teammap.accountname_ID ");
 		sql.append("INNER JOIN team ON teammap.teamname_ID=team.teamname_ID ");
 		sql.append(
 				"INNER JOIN organisationseinheit ON team.organisationseinheitname_ID=organisationseinheit.organisationseinheitname_ID ");
 		sql.append(
-				"WHERE account.rollename_ID LIKE 'Teilnehmer' AND organisationseinheit.organisationseinheitname_ID LIKE '");
-		sql.append(group);
+				"WHERE account.rollename_ID LIKE 'Teilnehmer' AND organisationseinheit.organisationseinheitname_ID LIKE ? ");
 		sql.append(
-				"' OR account.rollename_ID LIKE 'Teamleiter' AND organisationseinheit.organisationseinheitname_ID LIKE '");
-		sql.append(group);
-		sql.append("';");
-		return returnArrayList(sql.toString());
+				"OR account.rollename_ID LIKE 'Teamleiter' AND organisationseinheit.organisationseinheitname_ID LIKE ? ;");
+		return returnArrayList(sql.toString(), h, k);
 	}
 
 	// Method getJurorForGroup()
 	public ArrayList<HashMap<String, String>> getJurorsInGroup(String group) throws SQLException {
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("organisationseinheitname_ID", group);
+		Set<String> k = h.keySet();
 		StringBuilder sql = new StringBuilder("SELECT account.* FROM account ");
 		sql.append("INNER JOIN jurormap ON account.accountname_ID=jurormap.accountname_ID ");
 		sql.append(
 				"INNER JOIN organisationseinheit ON jurormap.organisationseinheitname_ID=organisationseinheit.organisationseinheitname_ID ");
 		sql.append("WHERE account.rollename_ID LIKE 'Juror' ");
-		sql.append("AND organisationseinheit.organisationseinheitname_ID LIKE '");
-		sql.append(group);
-		sql.append("';");
-		return returnArrayList(sql.toString());
+		sql.append("AND organisationseinheit.organisationseinheitname_ID LIKE ? ;");
+		return returnArrayList(sql.toString(), h, k);
 	}
 
-	// Method getCurrentPhase
-	public String getCurrentPhase() throws SQLException {
+	// Method checkForCurrendPhase
+	public boolean checkForCurrentPhase(String phase) throws SQLException {
 		LocalDate localDate = LocalDate.now();
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT phasename_ID FROM phase Where startDatum <= '");
-		sql.append(localDate);
-		sql.append("'And endDatum > '");
-		sql.append(localDate);
-		sql.append("'");
-		ArrayList<HashMap<String, String>> list = returnArrayList(sql.toString());
-		return list.isEmpty() ? null : list.get(0).get("phasename_ID");
-	}
-	
-	// Method checkForCurrendPhase
-    public boolean checkForCurrentPhase(String phase) throws SQLException {
-        LocalDate localDate = LocalDate.now();
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT phasename_ID FROM phase Where startDatum <= '");
-        sql.append(localDate);
-        sql.append("'And endDatum > '");
-        sql.append(localDate);
-        sql.append("'");
-        ArrayList<HashMap<String, String>> list = returnArrayList(sql.toString());
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("localdate", phase);
+		h.put("localdate1", phase);
+		Set<String> k = h.keySet();
+		sql.append("SELECT phasename_ID FROM phase Where startDatum <= ? ");
+		sql.append("And endDatum > ? ;");
+		ArrayList<HashMap<String, String>> list = returnArrayList(sql.toString(), h, k);
 
-        for(HashMap h:list) {
-            if(h.get("phasename_ID").equals(phase))
-                return true;
-            }
-        return false;
-    }
+		for (HashMap<String, String> hMap : list) {
+			if (hMap.get("phasename_ID").equals(phase))
+				return true;
+		}
+		return false;
+	}
 
 	// Method insertNewGroup
 	public boolean insertNewGroup(ArrayList<HashMap<String, String>> juroren) throws SQLException {
 		StringBuilder sql = new StringBuilder("SELECT organisationseinheitname_ID FROM organisationseinheit;");
-		ArrayList<HashMap<String, String>> gruppen = returnArrayList(sql.toString());
-		sql.setLength(0);
-		sql.append("INSERT INTO organisationseinheit ");
-		sql.append("(organisationseinheitname_ID) VALUES ('");
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		Set<String> k = h.keySet();
+		ArrayList<HashMap<String, String>> gruppen = returnArrayList(sql.toString(), h, k);
 		int i = 0;
 		boolean clause = false;
 		for (HashMap<String, String> gruppe : gruppen) {
 			i++;
 			if (!gruppe.get("organisationseinheitname_ID").contains(i + "")) {
-				sql.append("Gruppe " + i);
-				sql.append("');");
-				executeUpdate(sql.toString());
+				h = new LinkedHashMap<>();
+				h.put("organisationseinheitname_ID", "Gruppe " + i);
+				insertHashMap("organisationseinheit", h);
 				clause = true;
 				break;
 			}
 		}
 		if (!clause) {
 			i++;
-			sql.append("Gruppe " + i);
-			sql.append("');");
-			executeUpdate(sql.toString());
+			h = new LinkedHashMap<>();
+			h.put("organisationseinheitname_ID", "Gruppe " + i);
+			insertHashMap("organisationseinheit", h);
 		}
-		for(HashMap<String, String> juror:juroren) {
-			juror.put("organisationseinheitname_ID", "Gruppe "+i);
-			insertHashMap("jurormap",juror);
+		for (HashMap<String, String> juror : juroren) {
+			juror.put("organisationseinheitname_ID", "Gruppe " + i);
+			insertHashMap("jurormap", juror);
 		}
-			
+
 		return true;
 	}
 
@@ -379,47 +435,49 @@ public class Driver {
 		return conn;
 	}
 
-	// Method returnArrayList
-	public ArrayList<HashMap<String, String>> returnArrayList(String sql) throws SQLException {
-		try (Connection c = getConnection();
-				Statement statement = c.createStatement();
-				ResultSet result = statement.executeQuery(sql)) {
+	// returnArrayList
+	public ArrayList<HashMap<String, String>> returnArrayList(String sql, HashMap<String, String> h, Set<String> keys)
+			throws SQLException {
+		try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+			int i = 1;
+			for (String key : keys)
+				if (persData.contains(key))
+					stmt.setString(i++, encryptData(h.get(key)));
+				else
+					stmt.setString(i++, h.get(key));
 
-			ResultSetMetaData resultSetMetaData = result.getMetaData();
-			int r = resultSetMetaData.getColumnCount();
-			ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
-			HashMap<String, String> hashMap;
-			while (result.next()) {
-				hashMap = new HashMap<>();
-				for (int i = 1; i <= r; i++)
-					hashMap.put(resultSetMetaData.getColumnLabel(i), result.getString(i));
-
-				arrayList.add(hashMap);
+			try (ResultSet result = stmt.executeQuery()) {
+				ResultSetMetaData resultSetMetaData = result.getMetaData();
+				int r = resultSetMetaData.getColumnCount();
+				ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
+				HashMap<String, String> hashMap;
+				while (result.next()) {
+					hashMap = new HashMap<>();
+					for (i = 1; i <= r; i++) {
+						String column = resultSetMetaData.getColumnLabel(i);
+						String data = result.getString(i);
+						if (persData.contains(column) && data!=null)
+							hashMap.put(column, decryptData(data));
+						else
+							hashMap.put(column, data);
+					}
+					arrayList.add(hashMap);
+				}
+				return arrayList;
 			}
-			return arrayList;
 		}
-	}
-
-	// Method formatSessionID
-	public String formatSessionID(String sessionID) {
-		while (sessionID.length() != 8)
-			sessionID = "0" + sessionID;
-		return sessionID;
 	}
 
 	// Method executeUpdate
-	public boolean executeUpdate(String sql) throws SQLException {
-		try (Connection c = getConnection(); Statement statement = c.createStatement();) {
-			statement.executeUpdate(sql);
-			return true;
-		}
-	}
 
 	public boolean executeUpdate(String sql, HashMap<String, String> hashMap, Set<String> keys) throws SQLException {
 		try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 			int i = 1;
 			for (String key : keys)
-				stmt.setString(i++, hashMap.get(key));
+				if (persData.contains(key) && hashMap.get(key)!=null)
+					stmt.setString(i++, encryptData(hashMap.get(key)));
+				else
+					stmt.setString(i++, hashMap.get(key));
 
 			stmt.execute();
 			return true;
@@ -429,12 +487,17 @@ public class Driver {
 	// Method generateKennnummer
 	public String generateKennnummer(String lehrstuhlName) throws SQLException {
 		// Get Lehrstuhl
-		String sql = "Select lehrstuhlnummer From lehrstuhl Where lehrstuhlname_ID like '" + lehrstuhlName + "'";
-		String lehrstuhl = returnArrayList(sql).get(0).get("lehrstuhlnummer");
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.put("lehrstuhlname_ID", lehrstuhlName);
+		Set<String> k = h.keySet();
+		String sql = "Select lehrstuhlnummer From lehrstuhl Where lehrstuhlname_ID like ?";
+		String lehrstuhl = returnArrayList(sql, h, k).get(0).get("lehrstuhlnummer");
 		//
 		// getTeam
 		sql = "Select count(*) As anzahl From team Where 1";
-		String teamnummer = returnArrayList(sql).get(0).get("anzahl");
+		h = new LinkedHashMap<>();
+		k = h.keySet();
+		String teamnummer = returnArrayList(sql, h, k).get(0).get("anzahl");
 		int i = Integer.parseInt(teamnummer);
 		while ((i + "").equals(teamnummer))
 			i++;
@@ -449,7 +512,7 @@ public class Driver {
 		int l, t;
 		l = Integer.parseInt(lehrstuhl);
 		t = Integer.parseInt(teamnummer);
-		return ""+(l < 10 ? "0" + l : l) + "" + (t < 10 ? "0" + t : t) + "" + localDate.getYear();
+		return "" + (l < 10 ? "0" + l : l) + "" + (t < 10 ? "0" + t : t) + "" + localDate.getYear();
 	}
 
 	public static String getHash(byte inputBytes[]) throws NoSuchAlgorithmException {
@@ -460,4 +523,45 @@ public class Driver {
 		byte digestedBytes[] = messageDigest.digest();
 		return DatatypeConverter.printHexBinary(digestedBytes);
 	}
+
+	public String encryptData(String s) {
+		try {
+			Cipher c = Cipher.getInstance("AES");
+			SecretKeySpec key = new SecretKeySpec(aes, "AES");
+			c.init(Cipher.ENCRYPT_MODE, key);
+			byte b[] = c.doFinal(s.getBytes());
+			s = new BASE64Encoder().encode(b);
+			return s;
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException
+				| InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public String decryptData(String s) {
+		Cipher cipher;
+		try {
+			cipher = Cipher.getInstance("AES");
+			SecretKeySpec key = new SecretKeySpec(aes, "AES");
+			cipher.init(Cipher.DECRYPT_MODE, key);
+			// _"CHTC#E !
+			byte decodedString[] = Base64.getDecoder().decode(s.getBytes());
+			// byte decodedString[]=new BASE64Decoder().decodeBuffer(s);
+			byte b[] = cipher.doFinal(decodedString);
+			s = new String(b);
+			return s;
+			// return DatatypeConverter.printBase64Binary(b);
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException
+				| InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return s;
+		} catch (IllegalArgumentException e) {
+			System.out.println("Base64 Error");
+			return s;
+		}
+	}
+
 }
