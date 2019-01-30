@@ -69,6 +69,19 @@ public class Driver {
 		else
 			return false;
 	}
+	
+	public ArrayList<HashMap<String, String>> getTeamsOfJuror(String session_ID) throws SQLException{
+		StringBuilder sql=new StringBuilder("SELECT team.* FROM sessionmap ");
+		sql.append("INNER JOIN account ON sessionmap.accountname_ID=account.accountname_ID ");
+		sql.append("INNER JOIN jurormap ON account.accountname_ID=jurormap.accountname_ID ");
+		sql.append("INNER JOIN organisationseinheit ON jurormap.organisationseinheitname_ID=organisationseinheit.organisationseinheitname_ID ");
+		sql.append("INNER JOIN team ON organisationseinheit.organisationseinheitname_ID=team.organisationseinheitname_ID ");
+		sql.append("WHERE sessionmap.sessionmapname_ID=?;");
+		LinkedHashMap <String,String> h = new LinkedHashMap<>();
+		h.put("sessionmapname_ID", "?");
+		Set <String> keys = h.keySet();
+		return returnArrayList(sql.toString(), h, keys);
+	}
 
 	// Methode getTutorTeams
 	public ArrayList<HashMap<String, String>> getTutorTeams(String user) throws SQLException {
