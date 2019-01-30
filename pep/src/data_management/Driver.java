@@ -299,7 +299,7 @@ public class Driver {
 		h.put("password", password);
 		Set<String> k = h.keySet();
 		ArrayList<HashMap<String, String>> a = returnArrayList(sql, h, k);
-		if (a == null || a.isEmpty() ||!Boolean.parseBoolean(a.get(0).get("activated")))
+		if (a == null || a.isEmpty() || a.get(0).get("activated").equals("0"))
 			return null;
 		sql = "Insert Into sessionmap (accountname_ID) Values(?) ;";
 		h = new LinkedHashMap<>();
