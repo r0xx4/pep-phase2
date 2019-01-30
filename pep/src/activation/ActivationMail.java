@@ -43,6 +43,7 @@ public class ActivationMail extends HttpServlet {
 		
 		String id=query.split("&")[0].split("=")[1];
 		String pw=query.split("&")[1].split("=")[1];
+		
 		ArrayList<HashMap<String, String>> user =datenhaltung.getSubCat("account", "anonyme_ID", id);
 		String pworg=user.get(0).get("bestaetigungspasswort");
 		if(pw.equals(pworg))
