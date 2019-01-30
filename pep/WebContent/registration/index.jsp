@@ -183,7 +183,9 @@
                     document.getElementById("inputCourseOfStudies").disabled=true;
                 }
             }
-
+			<%
+			if(datenhaltung.checkForCurrentPhase("Registrierungsphase")){
+			%>
             document.querySelector('#btnRegister').addEventListener('click', btnRegisterEvent);  
             function btnRegisterEvent(){
                 //Hier Code für Btn-Registrieren gedrückt
@@ -232,8 +234,18 @@
                 	registration_map["matrikelnummer"] = matriculationNumber;
                 	registration_map["masterkey"] = masterkey;
                 	post("/pep/registration/transfer_account_data", registration_map);
-            }    
-
+            }  
+            <%
+			}
+			else{
+			%>
+            document.querySelector('#btnRegister').addEventListener('click', btnRegisterEvent);  
+            function btnRegisterEvent(){
+                alert("Registrierungsphase abgelaufen!");
+            } 
+            <%
+			}
+			%>
             document.querySelector('#btnLogIn').addEventListener('click', btnLogInEvent);  
             function btnLogInEvent(){
                 //Hier Code für Btn-Anmelden gedrückt 
