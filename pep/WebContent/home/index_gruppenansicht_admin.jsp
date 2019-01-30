@@ -299,7 +299,7 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary"
 						data-dismiss="modal">Abbrechen</button>
-					<button type="button" id="btn_add_group" class="btn btn-primary">Hinzufügen</button>
+					<button type="button" id="btn_add_group" class="btn btn-primary">Speichern</button>
 				</div>
 			</div>
 		</div>

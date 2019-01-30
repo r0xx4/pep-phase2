@@ -277,7 +277,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
-                        <button id = "btn_save" type="button" class="btn btn-primary">Hinzufügen</button>
+                        <button id = "btn_save" type="button" class="btn btn-primary">Speichern</button>
                     </div>
                 </div>
             </div>
