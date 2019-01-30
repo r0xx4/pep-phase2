@@ -35,24 +35,14 @@ public class ActivationMail extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("hi");
-		// TODO Auto-generated method stub
-		HashMap<String, String> account_acctivation = new HashMap<>();
-		for (String key : request.getParameterMap().keySet())
-		{
-			account_acctivation.put(key, request.getParameterMap().get(key)[0]);
-		}
+		
 		Driver datenhaltung = new Driver();
 		try {
-		String id=(account_acctivation.get("ID"));
-		String pw=account_acctivation.get("Password");
+		String querry = request.getQueryString();
+		
+		String id=query.split("&")[0].split("=")[1];
+		String pw=query.split("&")[1].split("=")[1];
 		ArrayList<HashMap<String, String>> user =datenhaltung.getSubCat("account", "anonyme_ID", id);
 		String pworg=user.get(0).get("bestaetigungspasswort");
 		if(pw.equals(pworg))
@@ -103,6 +93,14 @@ public class ActivationMail extends HttpServlet {
 			out.println("</body>");
 			out.close();
 		}
+		
+		
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		
 	}
