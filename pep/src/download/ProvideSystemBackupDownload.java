@@ -69,6 +69,7 @@ public class ProvideSystemBackupDownload extends HttpServlet {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
+		
 		//Ordner C:\Backup\ zippen und unter C:\backup.zip speichern      
         try {
 			zipFolder("C:\\Backup", "C:\\Old Backups\\backup.zip");
@@ -169,7 +170,7 @@ public class ProvideSystemBackupDownload extends HttpServlet {
 	            {
 	                in.close();
 	            }
-	            catch (IOException e1)
+	            catch (IOException | NullPointerException e1)
 	            {
 	                e1.printStackTrace();
 	            }
@@ -178,7 +179,7 @@ public class ProvideSystemBackupDownload extends HttpServlet {
 	            {
 	                out.close();
 	            }
-	            catch (IOException e1)
+	            catch (IOException | NullPointerException e1)
 	            {
 	                e1.printStackTrace();
 	            }
