@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import data_management.Driver;
+
 /**
  * Servlet implementation class ProvideSystemBackupDownload
  */
@@ -60,7 +62,13 @@ public class ProvideSystemBackupDownload extends HttpServlet {
 		
 		//Datenbank unter C:\Backup\ speichern
 			//   @IVAN BITTE FUNKTION ERSTELLEN
-		
+		Driver datenhaltung = new Driver();
+		// dbPathIn muss in backupDatabase noch auf Server Path geändert werden
+		try {
+			datenhaltung.backupDatabase();
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		//Ordner C:\Backup\ zippen und unter C:\backup.zip speichern      
         try {
 			zipFolder("C:\\Backup", "C:\\Old Backups\\backup.zip");
