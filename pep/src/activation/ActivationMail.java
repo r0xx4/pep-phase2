@@ -35,7 +35,6 @@ public class ActivationMail extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("hi");
 		
 		Driver datenhaltung = new Driver();
 		try {
@@ -48,8 +47,7 @@ public class ActivationMail extends HttpServlet {
 		String pworg=user.get(0).get("bestaetigungspasswort");
 		if(pw.equals(pworg))
 		{
-			System.out.println("lol");
-			//datenhaltung.activate(id);
+			datenhaltung.activateAccount(Integer.valueOf(id));
 			PrintWriter out = response.getWriter();
 			out.println("<!DOCTYPE html>");
 			out.println("<html>");
