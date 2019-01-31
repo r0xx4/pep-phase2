@@ -201,7 +201,9 @@ public class Driver {
 	}
 
 	public boolean updateTable(String table, String iDV, HashMap<String, String> hashMap) throws SQLException {
-		Set<String> keys = hashMap.keySet();
+		LinkedHashMap<String, String> h = new LinkedHashMap<>();
+		h.putAll(hashMap);
+		Set<String> keys = h.keySet();
 		StringBuilder sql = new StringBuilder("UPDATE ");
 		sql.append(table);
 		sql.append(" SET ");
@@ -211,13 +213,12 @@ public class Driver {
 		sql.setLength(sql.length() - 1);
 
 		String temp = table + "name_ID";
-		hashMap.put(temp, iDV);
-		keys = hashMap.keySet();
+		h.put(temp, iDV);
+		keys = h.keySet();
 		sql.append("WHERE ");
 		sql.append(table);
 		sql.append("name_ID LIKE ? ;");
-
-		return executeUpdate(sql.toString(), hashMap, keys);
+		return executeUpdate(sql.toString(), h, keys);
 	}
 
 	public String getSessionUser(String session_id) throws SQLException {
