@@ -45,6 +45,7 @@ public class HandleDBWriteProjectSettings extends HttpServlet {
 		{
 			push_into_db.put(key, request.getParameterMap().get(key)[0]);
 		}
+		System.out.println("hi" + push_into_db);
 		
 		HttpSession session = request.getSession();
 		String session_ID = (String)(session.getAttribute("session_id"));
@@ -150,7 +151,7 @@ public class HandleDBWriteProjectSettings extends HttpServlet {
 								String[] lehrstuehle_del = push_into_db.get(attribute).split("%");
 								for (String lehrstuhl_del : lehrstuehle_del)
 								{
-									datenhaltung.deleteRow("studiengang", lehrstuhl_del);
+									datenhaltung.deleteRow("lehrstuhl", lehrstuhl_del);
 								}
 							}
 						}

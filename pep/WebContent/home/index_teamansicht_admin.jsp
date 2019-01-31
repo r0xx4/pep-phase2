@@ -134,8 +134,11 @@
 	                                    <td><% out.print(tutor_2); %></td>
 	                                    <% 
 	                        			ArrayList<HashMap<String, String>> lehrstuhl_tut_1 = datenhaltung.getSubCat("lehrstuhl", "accountname_ID", tutors.get(tutors.size()-1).get("tutor1"), "lehrstuhlname_ID");
-	                                    String lehrstuhlname_ID = lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID");
-	                    				String org_einheit_lehrstuhl = datenhaltung.getSubCat("lehrstuhl", "lehrstuhlname_ID", lehrstuhlname_ID, "organisationseinheitname_ID").get(0).get("organisationseinheitname_ID");
+	                                    String org_einheit_lehrstuhl = "";
+	                                    if(!lehrstuhl_tut_1.isEmpty()){
+	                                    	String lehrstuhlname_ID = lehrstuhl_tut_1.get(0).get("lehrstuhlname_ID");
+		                    				org_einheit_lehrstuhl = datenhaltung.getSubCat("lehrstuhl", "lehrstuhlname_ID", lehrstuhlname_ID, "organisationseinheitname_ID").get(0).get("organisationseinheitname_ID");
+	                                    }
 	                                    %>
 	                                    <td><% out.print(org_einheit_lehrstuhl); %></td>
 	                                    <td><% out.print(row.get("projekttitel")); %></td>

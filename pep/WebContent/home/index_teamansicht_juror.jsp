@@ -80,8 +80,10 @@
                             	<% 	
                            		Driver datenhaltung = new Driver();
                            		//ArrayList<HashMap<String, String>> html_contents = datenhaltung.getSubCat("team"); oldversion
-                           		String user = datenhaltung.getSessionUser(request.getSession().getAttribute("session_id").toString());
-                           		ArrayList<HashMap<String, String>> html_contents = datenhaltung.getTeamsOfJuror(user);
+                           		String sessionID = request.getSession().getAttribute("session_id").toString();
+                           		String user = datenhaltung.getSessionUser(sessionID);
+                           		ArrayList<HashMap<String, String>> html_contents = datenhaltung.getTeamsOfJuror(sessionID);
+                           		System.out.println(sessionID + html_contents);
                            		ArrayList<HashMap<String, String>> criterions = datenhaltung.getSubCat("teilkriterium");
                            		ArrayList<HashMap<String, String>> tutors = new ArrayList<>();
                            		for (HashMap<String, String> row : html_contents)

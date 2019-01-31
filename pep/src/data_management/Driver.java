@@ -78,7 +78,7 @@ public class Driver {
 		sql.append("INNER JOIN team ON organisationseinheit.organisationseinheitname_ID=team.organisationseinheitname_ID ");
 		sql.append("WHERE sessionmap.sessionmapname_ID=?;");
 		LinkedHashMap <String,String> h = new LinkedHashMap<>();
-		h.put("sessionmapname_ID", "?");
+		h.put("sessionmapname_ID", session_ID);
 		Set <String> keys = h.keySet();
 		return returnArrayList(sql.toString(), h, keys);
 	}
@@ -389,9 +389,9 @@ public class Driver {
 		sql.append(
 				"INNER JOIN organisationseinheit ON team.organisationseinheitname_ID=organisationseinheit.organisationseinheitname_ID ");
 		sql.append(
-				"WHERE account.rollename_ID LIKE 'Teilnehmer' AND organisationseinheit.organisationseinheitname_ID LIKE ? ");
+				"WHERE account.rollename_ID LIKE 'CzNSB3XXRV6fCvxC7+P5JQ==' AND organisationseinheit.organisationseinheitname_ID LIKE ? ");
 		sql.append(
-				"OR account.rollename_ID LIKE 'Teamleiter' AND organisationseinheit.organisationseinheitname_ID LIKE ? ;");
+				"OR account.rollename_ID LIKE 'd2E+sjFUmgF3+7qezrwuPw==' AND organisationseinheit.organisationseinheitname_ID LIKE ? ;");
 		return returnArrayList(sql.toString(), h, k);
 	}
 
@@ -404,8 +404,9 @@ public class Driver {
 		sql.append("INNER JOIN jurormap ON account.accountname_ID=jurormap.accountname_ID ");
 		sql.append(
 				"INNER JOIN organisationseinheit ON jurormap.organisationseinheitname_ID=organisationseinheit.organisationseinheitname_ID ");
-		sql.append("WHERE account.rollename_ID LIKE 'Juror' ");
+		sql.append("WHERE account.rollename_ID LIKE 'PglvmottPSBMWfRffZEFpQ==' ");
 		sql.append("AND organisationseinheit.organisationseinheitname_ID LIKE ? ;");
+		System.out.println(sql);
 		return returnArrayList(sql.toString(), h, k);
 	}
 
@@ -414,8 +415,8 @@ public class Driver {
 		LocalDate localDate = LocalDate.now();
 		StringBuilder sql = new StringBuilder();
 		LinkedHashMap<String, String> h = new LinkedHashMap<>();
-		h.put("localdate", phase);
-		h.put("localdate1", phase);
+		h.put("localdate", localDate.toString());
+		h.put("localdate1", localDate.toString());
 		Set<String> k = h.keySet();
 		sql.append("SELECT phasename_ID FROM phase Where startDatum <= ? ");
 		sql.append("And endDatum > ? ;");
