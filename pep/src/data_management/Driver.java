@@ -179,7 +179,9 @@ public class Driver {
 
 	// Method setTeamLeader
 	public boolean setTeamLeader(String mail) throws SQLException {
-		String sql = "UPDATE account SET rollename_ID='Teamleiter' Where accountname_ID Like ? ;";
+		System.out.println(mail);
+		String sql = "UPDATE account SET rollename_ID='d2E+sjFUmgF3+7qezrwuPw==' Where accountname_ID Like ? ;";
+		System.out.println(sql);
 		LinkedHashMap<String, String> h = new LinkedHashMap<>();
 		h.put("accountname_ID", mail);
 		Set<String> k = h.keySet();
@@ -238,7 +240,8 @@ public class Driver {
 		sql.append(" WHERE ");
 		sql.append(table);
 		sql.append("name_ID LIKE ?");
-
+		System.out.println(sql);
+		System.out.println(iDV);
 		return executeUpdate(sql.toString(), h, k);
 	}
 
@@ -513,7 +516,7 @@ public class Driver {
 					stmt.setString(i++, encryptData(hashMap.get(key)));
 				else
 					stmt.setString(i++, hashMap.get(key));
-
+				System.out.println(stmt);
 			stmt.execute();
 			return true;
 		}
