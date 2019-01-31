@@ -45,11 +45,12 @@ public class HandleDBWriteNewAccount extends HttpServlet {
 		HashMap<String, String> account_data = new HashMap<>();
 		for (String key : request.getParameterMap().keySet())
 		{
-			if (!request.getParameterMap().get(key)[0].equals(""))
+			if (!request.getParameterMap().get(key)[0].equals("") && !request.getParameterMap().get(key)[0].equals("null"))
 				account_data.put(key, request.getParameterMap().get(key)[0]);
 			else
 				account_data.put(key, null);
 		}
+		System.out.println(account_data);
 		
 		Driver datenhaltung = new Driver();
 		HttpSession session = request.getSession();
