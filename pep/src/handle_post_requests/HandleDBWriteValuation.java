@@ -54,7 +54,7 @@ public class HandleDBWriteValuation extends HttpServlet {
 			{
 				String accountname_ID = datenhaltung.getSubCat("sessionmap", session_ID).get(0).get("accountname_ID");
 				String rolle = datenhaltung.getSubCat("account", accountname_ID).get(0).get("rollename_ID");
-				if (rolle.equals("Admin") || rolle.equals("Tutor"))
+				if (rolle.equals("Admin") || rolle.equals("Juror"))
 				{
 					String teamname_ID = push_into_db.get("teamname_ID");
 					String note = push_into_db.get("note_ID");
